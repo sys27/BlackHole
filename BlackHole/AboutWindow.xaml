@@ -1,0 +1,17 @@
+﻿<Window x:Class="BlackHole.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Про програму" Width="320" Height="138"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
+    <Grid>
+        <Image Source="Images\Icon.ico" Width="64" Margin="12,20,0,21" HorizontalAlignment="Left" />
+        <TextBlock Text="xFunc" FontSize="22" FontWeight="Bold" VerticalAlignment="Top" Margin="0,20,0,0" TextAlignment="Center" />
+        <TextBlock VerticalAlignment="Top" Margin="0,50,0,0" TextAlignment="Center">
+            <Run Text="Версія:" />
+            <Run x:Name="versionNumber" />
+        </TextBlock>
+
+        <Button Content="OK" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="75" Margin="0,0,8,8" IsDefault="True" IsCancel="True" />
+    </Grid>
+</Window>

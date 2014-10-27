@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,9 +26,22 @@ namespace BlackHole
 
         public static RoutedCommand AboutCommand = new RoutedCommand();
 
+        public static RoutedCommand CompressCommand = new RoutedCommand();
+        public static RoutedCommand ExtractAllCommand = new RoutedCommand();
+        public static RoutedCommand ExtractCommand = new RoutedCommand();
+
+        public static RoutedCommand AddCommand = new RoutedCommand();
+        public static RoutedCommand RemoveCommand = new RoutedCommand();
+
+        private ObservableCollection<FileViewModel> files;
+
         public MainWindow()
         {
+            files = new ObservableCollection<FileViewModel>();
+
             InitializeComponent();
+
+            filesListView.DataContext = files;
         }
 
         private void ExitCommand_Execute(object o, ExecutedRoutedEventArgs args)
@@ -37,6 +53,36 @@ namespace BlackHole
         {
             var aboutView = new AboutWindow { Owner = this };
             aboutView.ShowDialog();
+        }
+
+        private void AddCommand_Execute(object o, ExecutedRoutedEventArgs args)
+        {
+            var ofd = new OpenFileDialog
+            {
+                Multiselect = true
+            };
+            if (ofd.ShowDialog(this) == true)
+                foreach (var file in ofd.FileNames)
+                    files.Add(new FileViewModel(file, System.IO.Path.GetFileName(file), new FileInfo(file).Length / 1048576));
+        }
+
+        private void RemoveCommand_Execute(object o, ExecutedRoutedEventArgs args)
+        {
+            var file = filesListView.SelectedItem as FileViewModel;
+            files.Remove(file);
+        }
+
+        private void RemoveCommand_CanExecute(object o, CanExecuteRoutedEventArgs args)
+        {
+            args.CanExecute = filesListView != null && filesListView.SelectedItem != null;
+        }
+
+        public ObservableCollection<FileViewModel> Files
+        {
+            get
+            {
+                return files;
+            }
         }
 
     }

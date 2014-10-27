@@ -8,11 +8,14 @@
     <Window.CommandBindings>
         <CommandBinding Command="local:MainWindow.ExitCommand" Executed="ExitCommand_Execute" />
         <CommandBinding Command="local:MainWindow.AboutCommand" Executed="AboutCommand_Execute" />
+        
+        <CommandBinding Command="local:MainWindow.AddCommand" Executed="AddCommand_Execute" />
+        <CommandBinding Command="local:MainWindow.RemoveCommand" Executed="RemoveCommand_Execute" CanExecute="RemoveCommand_CanExecute" />
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Command="local:MainWindow.ExitCommand" Modifiers="Alt" Key="F4" />
     </Window.InputBindings>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -32,37 +35,19 @@
         </Menu>
         <GroupBox Grid.Row="1" Header="Файли" Margin="2">
             <Grid>
-                <Button VerticalAlignment="Top" Height="24" HorizontalAlignment="Left" Width="24" Margin="10,0,0,0">
-                    <Button.Content>
-                        <Image Source="Images\Add.png" />
-                    </Button.Content>
-                </Button>
-                <Button VerticalAlignment="Top" Height="24" HorizontalAlignment="Left" Width="24" Margin="39,0,0,0">
-                    <Button.Content>
-                        <Image Source="Images\Add.png" />
-                    </Button.Content>
-                </Button>
-                <Button VerticalAlignment="Top" Height="24" HorizontalAlignment="Left" Width="24" Margin="68,0,0,0">
-                    <Button.Content>
-                        <Image Source="Images\Add.png" />
-                    </Button.Content>
-                </Button>
-                
-                <Button Margin="0,0,39,0" VerticalAlignment="Top" Height="24" HorizontalAlignment="Right" Width="24">
-                    <Button.Content>
-                        <Image Source="Images\Add.png" />
-                    </Button.Content>
-                </Button>
-                <Button Margin="0,0,10,0" VerticalAlignment="Top" Height="24" HorizontalAlignment="Right" Width="24">
-                    <Button.Content>
-                        <Image Source="Images\Remove.png" />
-                    </Button.Content>
-                </Button>
-                <ListView Margin="0,29,0,0">
+                <Button Content="Стиснути" VerticalAlignment="Top" Height="24" HorizontalAlignment="Left" Width="85" Margin="10,0,0,0" />
+                <Button Content="Видобути все" VerticalAlignment="Top" Height="24" HorizontalAlignment="Left" Width="85" Margin="100,0,0,0" />
+                <Button Content="Видобути" VerticalAlignment="Top" Height="24" HorizontalAlignment="Left" Width="85" Margin="190,0,0,0" />
+                <Label Content="Розмір блоку:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="280,-1,0,0" />
+                <TextBox x:Name="blockSizeTextBox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="48" Margin="370,3,0,0" Text="65536" />
+
+                <Button Content="Додати" Margin="0,0,100,0" VerticalAlignment="Top" Height="24" HorizontalAlignment="Right" Width="85" Command="local:MainWindow.AddCommand" />
+                <Button Content="Видалити" Margin="0,0,10,0" VerticalAlignment="Top" Height="24" HorizontalAlignment="Right" Width="85" Command="local:MainWindow.RemoveCommand" />
+                <ListView x:Name="filesListView" Margin="0,29,0,0" ItemsSource="{Binding}">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Назва" Width="400" />
-                            <GridViewColumn Header="Розмір" Width="150" />
+                            <GridViewColumn Header="Назва" Width="400" DisplayMemberBinding="{Binding Name}" />
+                            <GridViewColumn Header="Розмір" Width="150" DisplayMemberBinding="{Binding Size}" />
                         </GridView>
                     </ListView.View>
                 </ListView>

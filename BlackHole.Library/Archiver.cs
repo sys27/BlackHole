@@ -36,7 +36,10 @@ namespace BlackHole.Library
                 var codes = huffman.GetCodes(input);
                 var bitsLength = huffman.Compress(input, output, codes);
 
-                var file = new ArchivedFile(inputFile, new FileInfo(inputFile).Length, bitsLength, 0, codes);
+                var originalSize = new FileInfo(inputFile).Length;
+                // todo: get offset!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                var offset = 0;
+                var file = new ArchivedFile(inputFile, originalSize, bitsLength, 0, codes);
             }
         }
 

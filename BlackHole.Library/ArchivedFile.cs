@@ -47,6 +47,10 @@ namespace BlackHole.Library
             {
                 return bitsLength;
             }
+            internal set
+            {
+                bitsLength = value;
+            }
         }
 
         public long Offset
@@ -54,6 +58,10 @@ namespace BlackHole.Library
             get
             {
                 return offset;
+            }
+            internal set
+            {
+                offset = value;
             }
         }
 

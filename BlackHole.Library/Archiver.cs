@@ -33,13 +33,44 @@ namespace BlackHole.Library
             {
                 var input = File.OpenRead(inputFile);
 
-                var codes = huffman.GetCodes(input);
-                var bitsLength = huffman.Compress(input, output, codes);
+                // todo: ???
+                var codes = huffman.GetCodes(input).ToArray();
 
                 var originalSize = new FileInfo(inputFile).Length;
-                // todo: get offset!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                var offset = 0;
-                var file = new ArchivedFile(inputFile, originalSize, bitsLength, 0, codes);
+                var file = new ArchivedFile(inputFile, originalSize, 0, 0, codes);
+
+                var bw = new BinaryWriter(output);
+                bw.Write(file.Name);
+                bw.Write(file.OriginalSize);
+
+                var fileInfoPosition = output.Position;
+                bw.Seek(16, SeekOrigin.Current);
+
+                bw.Write(codes.Length);
+                var codesCount = 0;
+                for (int i = 0; i < codes.Length; i++)
+                {
+                    if (codes[i] != null)
+                    {
+                        bw.Write((byte)i);
+                        bw.Write(codes[i].Bits);
+                        bw.Write(codes[i].Length);
+                        codesCount++;
+                    }
+                }
+
+                var bitsLength = huffman.Compress(input, output, codes);
+                var compressedPosition = output.Position;
+                var lastArchive = archive.LastOrDefault();
+                var offset = lastArchive != null ? lastArchive.Offset + ((bitsLength / 8) + 1) : 0;
+                file.BitsLength = bitsLength;
+                file.Offset = offset;
+
+                output.Position = fileInfoPosition;
+                bw.Write(file.BitsLength);
+                bw.Write(file.Offset);
+
+                output.Position = compressedPosition;
             }
         }
 

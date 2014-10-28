@@ -26,30 +26,30 @@ namespace BlackHoleCL
 
         static void Main(string[] args)
         {
-            if (args.Length == 0)
-            {
-                PrintHelp();
-                return;
-            }
+            //if (args.Length == 0)
+            //{
+            //    PrintHelp();
+            //    return;
+            //}
 
-            var command = args[0];
-            if (command == "-h" || command == "-?")
-            {
-                PrintHelp();
-            }
-            else if (command == "-c" && args.Length >= 2)
-            {
+            //var command = args[0];
+            //if (command == "-h" || command == "-?")
+            //{
+            //    PrintHelp();
+            //}
+            //else if (command == "-c" && args.Length >= 2)
+            //{
 
-            }
-            else if (command == "-d" && args.Length >= 2)
-            {
+            //}
+            //else if (command == "-d" && args.Length >= 2)
+            //{
 
-            }
-            else
-            {
-                Console.WriteLine();
-                PrintHelp();
-            }
+            //}
+            //else
+            //{
+            //    Console.WriteLine();
+            //    PrintHelp();
+            //}
 
             //using (var input = new MemoryStream(Encoding.ASCII.GetBytes("AAAAAAAAAABBBBBBBBBBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDEEEEEEEEEEEEEEEEEEEEEEEEEFFFFFFFFFF")))
             //{
@@ -62,14 +62,8 @@ namespace BlackHoleCL
             //    }
             //}
 
-            //using (var input = File.OpenRead("a.fb2"))
-            //{
-            //    using (var output = File.OpenWrite("a.fb2.bh"))
-            //    {
-            //        var hc = new HuffmanCode();
-            //        hc.Compress(input, output);
-            //    }
-            //}
+            var a = new Archiver();
+            a.Create(new[] { "a.fb2", "b.fb2" }, "a.fb2.bh");
         }
 
     }

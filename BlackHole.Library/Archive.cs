@@ -13,7 +13,7 @@ namespace BlackHole.Library
         private List<ArchivedFile> files;
         private long originalSize;
 
-        public Archive() { }
+        public Archive() : this(null) { }
 
         public Archive(IEnumerable<ArchivedFile> files)
         {

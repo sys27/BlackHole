@@ -63,7 +63,7 @@ namespace BlackHole
             };
             if (ofd.ShowDialog(this) == true)
                 foreach (var file in ofd.FileNames)
-                    files.Add(new FileViewModel(file, System.IO.Path.GetFileName(file), new FileInfo(file).Length / 1048576));
+                    files.Add(new FileViewModel(file, System.IO.Path.GetFileName(file), new FileInfo(file).Length));
         }
 
         private void RemoveCommand_Execute(object o, ExecutedRoutedEventArgs args)

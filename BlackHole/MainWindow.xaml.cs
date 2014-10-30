@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using BlackHole.Library;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -34,10 +35,12 @@ namespace BlackHole
         public static RoutedCommand RemoveCommand = new RoutedCommand();
 
         private ObservableCollection<FileViewModel> files;
+        private Archiver archiver;
 
         public MainWindow()
         {
             files = new ObservableCollection<FileViewModel>();
+            archiver = new Archiver();
 
             InitializeComponent();
 
@@ -53,6 +56,43 @@ namespace BlackHole
         {
             var aboutView = new AboutWindow { Owner = this };
             aboutView.ShowDialog();
+        }
+
+        private void CompressCommand_Execute(object o, ExecutedRoutedEventArgs args)
+        {
+            var sfd = new SaveFileDialog
+            {
+
+            };
+            if (sfd.ShowDialog(this) == true)
+            {
+                archiver.Create(files.Select(file => file.FullName).ToArray(), sfd.FileName);
+            }
+        }
+
+        private void CompressCommand_CanExecute(object o, CanExecuteRoutedEventArgs args)
+        {
+            args.CanExecute = filesListView != null && filesListView.Items.Count > 0;
+        }
+
+        private void ExtractAllCommand_Execute(object o, ExecutedRoutedEventArgs args)
+        {
+
+        }
+
+        private void ExtractAllCommand_CanExecute(object o, CanExecuteRoutedEventArgs args)
+        {
+            args.CanExecute = filesListView != null && filesListView.Items.Count > 0;
+        }
+
+        private void ExtractCommand_Execute(object o, ExecutedRoutedEventArgs args)
+        {
+
+        }
+
+        private void ExtractCommand_CanExecute(object o, CanExecuteRoutedEventArgs args)
+        {
+            args.CanExecute = filesListView != null && filesListView.SelectedItem != null;
         }
 
         private void AddCommand_Execute(object o, ExecutedRoutedEventArgs args)

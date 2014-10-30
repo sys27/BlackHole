@@ -8,6 +8,10 @@
     <Window.CommandBindings>
         <CommandBinding Command="local:MainWindow.ExitCommand" Executed="ExitCommand_Execute" />
         <CommandBinding Command="local:MainWindow.AboutCommand" Executed="AboutCommand_Execute" />
+
+        <CommandBinding Command="local:MainWindow.CompressCommand" Executed="CompressCommand_Execute" CanExecute="CompressCommand_CanExecute" />
+        <CommandBinding Command="local:MainWindow.ExtractAllCommand" Executed="ExtractAllCommand_Execute" CanExecute="ExtractAllCommand_CanExecute" />
+        <CommandBinding Command="local:MainWindow.ExtractCommand" Executed="ExtractCommand_Execute" CanExecute="ExtractCommand_CanExecute" />
         
         <CommandBinding Command="local:MainWindow.AddCommand" Executed="AddCommand_Execute" />
         <CommandBinding Command="local:MainWindow.RemoveCommand" Executed="RemoveCommand_Execute" CanExecute="RemoveCommand_CanExecute" />
@@ -35,9 +39,9 @@
         </Menu>
         <GroupBox Grid.Row="1" Header="Файли" Margin="2">
             <Grid>
-                <Button Content="Стиснути" VerticalAlignment="Top" Height="24" HorizontalAlignment="Left" Width="85" Margin="10,0,0,0" />
-                <Button Content="Видобути все" VerticalAlignment="Top" Height="24" HorizontalAlignment="Left" Width="85" Margin="100,0,0,0" />
-                <Button Content="Видобути" VerticalAlignment="Top" Height="24" HorizontalAlignment="Left" Width="85" Margin="190,0,0,0" />
+                <Button Content="Стиснути" VerticalAlignment="Top" Height="24" HorizontalAlignment="Left" Width="85" Margin="10,0,0,0" Command="local:MainWindow.CompressCommand" />
+                <Button Content="Видобути все" VerticalAlignment="Top" Height="24" HorizontalAlignment="Left" Width="85" Margin="100,0,0,0" Command="local:MainWindow.ExtractAllCommand" />
+                <Button Content="Видобути" VerticalAlignment="Top" Height="24" HorizontalAlignment="Left" Width="85" Margin="190,0,0,0" Command="local:MainWindow.ExtractCommand" />
                 <Label Content="Розмір блоку:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="280,-1,0,0" />
                 <TextBox x:Name="blockSizeTextBox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="48" Margin="370,3,0,0" Text="65536" />
 

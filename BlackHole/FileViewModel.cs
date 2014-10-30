@@ -19,6 +19,7 @@ namespace BlackHole
 
         public FileViewModel(string fullName, string name, long size)
         {
+            this.fullName = fullName;
             this.name = name;
             this.size = size;
         }

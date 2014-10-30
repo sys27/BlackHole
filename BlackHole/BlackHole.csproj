@@ -107,6 +107,12 @@
   <ItemGroup>
     <Resource Include="Images\Icon.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BlackHole.Library\BlackHole.Library.csproj">
+      <Project>{66a2d39d-92cd-4cf4-bb84-827f2dd70fd9}</Project>
+      <Name>BlackHole.Library</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -65,6 +65,8 @@ namespace BlackHole.Library
             }
         }
 
+        internal long InfoPosition { get; set; }
+
         public IEnumerable<SymbolCode> Codes
         {
             get

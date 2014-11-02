@@ -34,19 +34,27 @@ namespace BlackHole.Library
         {
             var codes = new SymbolCode[256];
 
-            foreach (var symbol in symbols)
+            if (symbols.Length == 1)
             {
-                var current = symbol;
-                var code = new SymbolCode();
-
-                while (current != root)
+                var symbol = symbols[0];
+                codes[symbol.Symbol] = new SymbolCode { Bits = 0, Length = 1 };
+            }
+            else
+            {
+                foreach (var symbol in symbols)
                 {
-                    code.SetBit(current.Bit);
+                    var current = symbol;
+                    var code = new SymbolCode();
 
-                    current = current.Parent;
+                    while (current != root)
+                    {
+                        code.SetBit(current.Bit);
+
+                        current = current.Parent;
+                    }
+
+                    codes[symbol.Symbol] = code;
                 }
-
-                codes[symbol.Symbol] = code;
             }
 
             return codes;
@@ -110,7 +118,7 @@ namespace BlackHole.Library
             return allBitsLength;
         }
 
-        public void Decompress(Stream input, Stream output)
+        public void Decompress(Stream input, Stream output, IEnumerable<SymbolCode> codes)
         {
 
         }

@@ -64,7 +64,7 @@ namespace BlackHoleCL
 
             var a = new Archiver();
             a.Create(new[] { "a.doc", "b.fb2" }, "!.bh");
-            a.ExtractAll("!.bh");
+            a.ExtractAll("!.bh", "");
         }
 
     }

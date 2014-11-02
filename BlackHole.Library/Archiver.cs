@@ -111,15 +111,18 @@ namespace BlackHole.Library
             output.Position = endPosition;
         }
 
-        public void ExtractAll(string inputFile)
+        public void ExtractAll(string inputFile, string folder)
         {
             if (string.IsNullOrWhiteSpace(inputFile))
                 throw new ArgumentNullException("inputFile");
 
-            ExtractAll(File.OpenRead(inputFile));
+            using (var input = File.OpenRead(inputFile))
+            {
+                ExtractAll(input, folder);
+            }
         }
 
-        public void ExtractAll(Stream input)
+        public void ExtractAll(Stream input, string folder)
         {
             if (input == null)
                 throw new ArgumentNullException("input");
@@ -148,6 +151,15 @@ namespace BlackHole.Library
 
                 var file = new ArchivedFile(name, originalSize, bitsLength, offset, codes);
                 archive.Add(file);
+            }
+
+            foreach (var file in archive)
+            {
+                using (var output = new FileStream(Path.Combine(folder, file.Name), FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    input.Seek(file.Offset, SeekOrigin.Begin);
+                    huffman.Decompress(input, output, file.Codes);
+                }
             }
         }
 

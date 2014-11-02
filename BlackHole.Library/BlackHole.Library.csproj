@@ -42,7 +42,8 @@
     <Compile Include="Archive.cs" />
     <Compile Include="ArchivedFile.cs" />
     <Compile Include="Archiver.cs" />
-    <Compile Include="BitStream.cs" />
+    <Compile Include="BitReadStream.cs" />
+    <Compile Include="BitWriteStream.cs" />
     <Compile Include="HuffmanCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HuffmanNode.cs" />

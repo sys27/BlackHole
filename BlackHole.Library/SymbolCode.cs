@@ -15,6 +15,15 @@ namespace BlackHole.Library
 
         public SymbolCode() { }
 
+        public override bool Equals(object obj)
+        {
+            var s = obj as SymbolCode;
+            if (s == null)
+                return false;
+
+            return bits == s.bits && lenght == s.lenght;
+        }
+
         public override string ToString()
         {
             return string.Format("Bits: {0}, Length: {1}", Convert.ToString(bits, 2), lenght);

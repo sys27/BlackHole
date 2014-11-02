@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace BlackHole.Library
 {
 
-    public class BitStream : Stream
+    public class BitWriteStream : Stream
     {
 
         private const int BUFFER_SIZE = 65536;
@@ -19,16 +19,14 @@ namespace BlackHole.Library
         // todo: to long or ulong
         private int bitLength;
 
-        public BitStream(Stream stream)
+        public BitWriteStream(Stream stream)
         {
             this.stream = stream;
-
-            buf = new byte[BUFFER_SIZE];
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            return stream.Read(buffer, offset, count);
+            throw new NotSupportedException();
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -46,8 +44,16 @@ namespace BlackHole.Library
             stream.Write(buffer, offset, count);
         }
 
+        public void WriteBits(SymbolCode code)
+        {
+            WriteBits(code.Bits, code.Length);
+        }
+
         public void WriteBits(int bits, byte length)
         {
+            if (buf == null)
+                buf = new byte[BUFFER_SIZE];
+
             var occupBits = bitLength % 8;
             var leftBits = 8 - occupBits;
             var index = bitLength / 8;
@@ -86,7 +92,7 @@ namespace BlackHole.Library
         {
             get
             {
-                return stream.CanRead;
+                return false;
             }
         }
 

@@ -102,14 +102,14 @@ namespace BlackHole.Library
             int count;
 
             input.Position = 0;
-            var bitOutput = new BitStream(output);
+            var bitOutput = new BitWriteStream(output);
             long allBitsLength = 0;
             while ((count = input.Read(buf, 0, buf.Length)) > 0)
             {
                 for (int i = 0; i < count; i++)
                 {
                     var code = codes.ElementAt(buf[i]);
-                    bitOutput.WriteBits(code.Bits, code.Length);
+                    bitOutput.WriteBits(code);
                     allBitsLength += code.Length;
                 }
             }
@@ -120,7 +120,15 @@ namespace BlackHole.Library
 
         public void Decompress(Stream input, Stream output, IEnumerable<SymbolCode> codes)
         {
+            var buf = new byte[BUFFER_SIZE];
+            int count;
+            while ((count = input.Read(buf, 0, buf.Length)) > 0)
+            {
+                for (int i = 0; i < count; i++)
+                {
 
+                }
+            }
         }
 
     }

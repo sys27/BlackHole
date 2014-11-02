@@ -63,7 +63,8 @@ namespace BlackHoleCL
             //}
 
             var a = new Archiver();
-            a.Create(new[] { "a.fb2", "b.fb2", "c.fb2" }, "!.bh");
+            a.Create(new[] { "a.doc", "b.fb2" }, "!.bh");
+            a.ExtractAll("!.bh");
         }
 
     }

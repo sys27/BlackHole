@@ -20,11 +20,21 @@ namespace BlackHole.Library
 
         public void Create(string[] inputFiles, string outputFile)
         {
-            Create(inputFiles, new FileStream(outputFile, FileMode.Create, FileAccess.Write, FileShare.None));
+            if (inputFiles == null)
+                throw new ArgumentNullException("inputFile");
+            if (string.IsNullOrWhiteSpace(outputFile))
+                throw new ArgumentNullException("outputFile");
+
+            using (var output = new FileStream(outputFile, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                Create(inputFiles, output);
+            }
         }
 
         public void Create(string[] inputFiles, Stream output)
         {
+            if (inputFiles == null || inputFiles.Length == 0)
+                throw new ArgumentNullException("inputFile");
             if (output == null)
                 throw new ArgumentNullException("output");
 
@@ -52,7 +62,7 @@ namespace BlackHole.Library
                     bw.Seek(16, SeekOrigin.Current);
 
                     var codesPosition = output.Position;
-                    bw.Seek(1, SeekOrigin.Current);
+                    bw.Seek(2, SeekOrigin.Current);
                     short codesCount = 0;
                     for (int j = 0; j < codes.Length; j++)
                     {
@@ -99,6 +109,46 @@ namespace BlackHole.Library
             output.Position = beginPosition;
             bw.Write(archive.FilesCount);
             output.Position = endPosition;
+        }
+
+        public void ExtractAll(string inputFile)
+        {
+            if (string.IsNullOrWhiteSpace(inputFile))
+                throw new ArgumentNullException("inputFile");
+
+            ExtractAll(File.OpenRead(inputFile));
+        }
+
+        public void ExtractAll(Stream input)
+        {
+            if (input == null)
+                throw new ArgumentNullException("input");
+
+            var br = new BinaryReader(input);
+
+            int filesCount = br.ReadInt32();
+            var archive = new Archive();
+            for (int i = 0; i < filesCount; i++)
+            {
+                var name = br.ReadString();
+                var originalSize = br.ReadInt64();
+                var bitsLength = br.ReadInt64();
+                var offset = br.ReadInt64();
+
+                var codesCount = br.ReadInt16();
+                var codes = new SymbolCode[256];
+                for (int j = 0; j < codesCount; j++)
+                {
+                    var symbol = br.ReadByte();
+                    var bits = br.ReadUInt16();
+                    var length = br.ReadByte();
+
+                    codes[symbol] = new SymbolCode { Bits = bits, Length = length };
+                }
+
+                var file = new ArchivedFile(name, originalSize, bitsLength, offset, codes);
+                archive.Add(file);
+            }
         }
 
     }

@@ -15,6 +15,11 @@ namespace BlackHole.Library
 
         public SymbolCode() { }
 
+        public override string ToString()
+        {
+            return string.Format("Bits: {0}, Length: {1}", Convert.ToString(bits, 2), lenght);
+        }
+
         public void SetBit(byte bit)
         {
             bits |= (ushort)(bit << lenght);

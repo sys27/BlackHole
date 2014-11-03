@@ -85,6 +85,54 @@ namespace BlackHole.Library
             return GetCodes(root, symbols);
         }
 
+        public HuffmanNode BuildTree(IEnumerable<SymbolCode> codes)
+        {
+            var root = new HuffmanNode();
+            var codesArr = codes.ToArray();
+
+            for (short i = 0; i < codesArr.Length; i++)
+            {
+                var code = codesArr[i];
+                if (code != null)
+                {
+                    var current = root;
+                    for (var check = 1 << code.Length - 1; check != 0; check >>= 1)
+                    {
+                        if ((code.Bits & check) != 0)
+                        {
+                            if (check != 1)
+                            {
+                                if (current.Right == null)
+                                    current.Right = new HuffmanNode { Parent = current };
+
+                                current = current.Right;
+                            }
+                            else
+                            {
+                                current.Right = new HuffmanNode { Parent = current, Symbol = i };
+                            }
+                        }
+                        else
+                        {
+                            if (check != 1)
+                            {
+                                if (current.Left == null)
+                                    current.Left = new HuffmanNode { Parent = current };
+
+                                current = current.Left;
+                            }
+                            else
+                            {
+                                current.Left = new HuffmanNode { Parent = current, Symbol = i };
+                            }
+                        }
+                    }
+                }
+            }
+
+            return root;
+        }
+
         public long Compress(Stream input, Stream output, IEnumerable<SymbolCode> codes)
         {
             if (input == null)

@@ -155,11 +155,12 @@ namespace BlackHole.Library
 
             foreach (var file in archive)
             {
-                using (var output = new FileStream(Path.Combine(folder, file.Name), FileMode.Create, FileAccess.Write, FileShare.None))
-                {
-                    input.Seek(file.Offset, SeekOrigin.Begin);
-                    huffman.Decompress(input, output, file.Codes);
-                }
+                var root = huffman.BuildTree(file.Codes);
+                //using (var output = new FileStream(Path.Combine(folder, file.Name), FileMode.Create, FileAccess.Write, FileShare.None))
+                //{
+                //    input.Seek(file.Offset, SeekOrigin.Begin);
+                //    huffman.Decompress(input, output, file.Codes);
+                //}
             }
         }
 

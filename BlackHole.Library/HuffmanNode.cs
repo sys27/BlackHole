@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace BlackHole.Library
 {
 
-    internal class HuffmanNode : IComparable<HuffmanNode>
+    public class HuffmanNode : IComparable<HuffmanNode>
     {
 
         private short symbol;
@@ -16,6 +16,8 @@ namespace BlackHole.Library
         private HuffmanNode parent;
         private HuffmanNode left;
         private HuffmanNode right;
+
+        internal HuffmanNode() { }
 
         public HuffmanNode(long weight)
             : this(-1, weight) { }
@@ -59,6 +61,10 @@ namespace BlackHole.Library
             get
             {
                 return symbol;
+            }
+            internal set
+            {
+                symbol = value;
             }
         }
 

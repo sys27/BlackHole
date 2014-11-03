@@ -16,10 +16,47 @@ namespace BlackHole.Library
 
         private Stream stream;
         private byte[] buf;
+        private int count;
+        private int currentIndex;
+        private sbyte leftBits;
 
         public BitReadStream(Stream stream)
         {
             this.stream = stream;
+
+            this.leftBits = 7;
+        }
+
+        public byte? ReadBit()
+        {
+            if (buf == null)
+            {
+                buf = new byte[BUFFER_SIZE];
+                count = Read(buf, 0, buf.Length);
+
+                if (count == 0)
+                    return null;
+            }
+
+            var b = buf[currentIndex];
+            var result = (byte)((b >> leftBits) & 1);
+            leftBits--;
+
+            if (leftBits < 0)
+            {
+                leftBits = 7;
+                currentIndex++;
+
+                if (currentIndex > count)
+                {
+                    count = Read(buf, 0, buf.Length);
+
+                    if (count == 0)
+                        return null;
+                }
+            }
+
+            return result;
         }
 
         public override int Read(byte[] buffer, int offset, int count)

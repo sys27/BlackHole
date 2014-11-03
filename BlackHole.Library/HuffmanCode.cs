@@ -168,14 +168,18 @@ namespace BlackHole.Library
 
         public void Decompress(Stream input, Stream output, IEnumerable<SymbolCode> codes)
         {
-            var buf = new byte[BUFFER_SIZE];
-            int count;
-            while ((count = input.Read(buf, 0, buf.Length)) > 0)
-            {
-                for (int i = 0; i < count; i++)
-                {
+            if (input == null)
+                throw new ArgumentNullException("input");
+            if (output == null)
+                throw new ArgumentNullException("output");
+            if (codes == null || codes.Count() == 0)
+                throw new ArgumentNullException("codes");
 
-                }
+            var bitReader = new BitReadStream(input);
+            byte? b = null;
+            while ((b = bitReader.ReadBit()) != null)
+            {
+                Console.WriteLine(b);
             }
         }
 

@@ -12,7 +12,7 @@ namespace BlackHole.Library
     {
 
         private const int BUFFER_SIZE = 65536;
-        private const int MAX_BITS = BUFFER_SIZE * 8;
+        //private const int MAX_BITS = BUFFER_SIZE * 8;
 
         private Stream stream;
         private byte[] buf;
@@ -24,7 +24,7 @@ namespace BlackHole.Library
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            throw new NotImplementedException();
+            return stream.Read(buf, offset, count);
         }
 
         public override long Seek(long offset, SeekOrigin origin)

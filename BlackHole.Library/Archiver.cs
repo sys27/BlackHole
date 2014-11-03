@@ -159,7 +159,7 @@ namespace BlackHole.Library
                 using (var output = new FileStream(Path.Combine(folder, file.Name), FileMode.Create, FileAccess.Write, FileShare.None))
                 {
                     input.Seek(file.Offset, SeekOrigin.Begin);
-                    huffman.Decompress(input, output, file.Codes);
+                    huffman.Decompress(input, output, root);
                 }
             }
         }

@@ -166,20 +166,20 @@ namespace BlackHole.Library
             return allBitsLength;
         }
 
-        public void Decompress(Stream input, Stream output, IEnumerable<SymbolCode> codes)
+        public void Decompress(Stream input, Stream output, HuffmanNode root)
         {
             if (input == null)
                 throw new ArgumentNullException("input");
             if (output == null)
                 throw new ArgumentNullException("output");
-            if (codes == null || codes.Count() == 0)
-                throw new ArgumentNullException("codes");
+            if (root == null)
+                throw new ArgumentNullException("root");
 
             var bitReader = new BitReadStream(input);
             byte? b = null;
             while ((b = bitReader.ReadBit()) != null)
             {
-                Console.WriteLine(b);
+
             }
         }
 

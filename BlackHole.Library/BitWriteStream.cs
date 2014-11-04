@@ -83,7 +83,7 @@ namespace BlackHole.Library
 
         public override void Flush()
         {
-            Write(buf, 0, bitLength / 8);
+            Write(buf, 0, (int)Math.Ceiling(bitLength / 8.0));
             stream.Flush();
             bitLength = 0;
         }

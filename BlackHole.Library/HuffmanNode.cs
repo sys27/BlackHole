@@ -17,7 +17,10 @@ namespace BlackHole.Library
         private HuffmanNode left;
         private HuffmanNode right;
 
-        internal HuffmanNode() { }
+        internal HuffmanNode()
+        {
+            this.symbol = -1;
+        }
 
         public HuffmanNode(long weight)
             : this(-1, weight) { }

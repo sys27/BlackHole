@@ -51,19 +51,8 @@ namespace BlackHoleCL
             //    PrintHelp();
             //}
 
-            //using (var input = new MemoryStream(Encoding.ASCII.GetBytes("AAAAAAAAAABBBBBBBBBBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDEEEEEEEEEEEEEEEEEEEEEEEEEFFFFFFFFFF")))
-            //{
-            //    using (var output = new MemoryStream())
-            //    {
-            //        var hc = new HuffmanCode();
-            //        hc.Compress(input, output);
-
-            //        var arr = output.ToArray();
-            //    }
-            //}
-
             var a = new Archiver();
-            a.Create(new[] { "b.fb2" }, "!.bh");
+            a.Create(new[] { "a.jpg", "b.fb2", "c.txt" }, "!.bh");
             a.ExtractAll("!.bh", @"a\");
         }
 

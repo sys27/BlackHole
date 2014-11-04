@@ -19,16 +19,22 @@ namespace BlackHole.Library
         private int count;
         private int currentIndex;
         private sbyte leftBits;
+        private long bitsLength;
+        private long currentBitsLength;
 
-        public BitReadStream(Stream stream)
+        public BitReadStream(Stream stream, long bitsLength)
         {
             this.stream = stream;
 
             this.leftBits = 7;
+            this.bitsLength = bitsLength;
         }
 
         public byte? ReadBit()
         {
+            if (currentBitsLength >= bitsLength)
+                return null;
+
             if (buf == null)
             {
                 buf = new byte[BUFFER_SIZE];
@@ -47,15 +53,17 @@ namespace BlackHole.Library
                 leftBits = 7;
                 currentIndex++;
 
-                if (currentIndex > count)
+                if (currentIndex >= count)
                 {
                     count = Read(buf, 0, buf.Length);
+                    currentIndex = 0;
 
                     if (count == 0)
                         return null;
                 }
             }
 
+            currentBitsLength++;
             return result;
         }
 

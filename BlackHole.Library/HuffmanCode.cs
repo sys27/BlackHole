@@ -109,7 +109,14 @@ namespace BlackHole.Library
                             }
                             else
                             {
-                                current.Right = new HuffmanNode { Parent = current, Symbol = i };
+                                var node = new HuffmanNode
+                                {
+                                    Parent = current,
+                                    Left = current.Right == null ? null : current.Right.Left,
+                                    Right = current.Right == null ? null : current.Right.Right,
+                                    Symbol = i
+                                };
+                                current.Right = node;
                             }
                         }
                         else
@@ -123,7 +130,14 @@ namespace BlackHole.Library
                             }
                             else
                             {
-                                current.Left = new HuffmanNode { Parent = current, Symbol = i };
+                                var node = new HuffmanNode
+                                {
+                                    Parent = current,
+                                    Left = current.Left == null ? null : current.Left.Left,
+                                    Right = current.Left == null ? null : current.Left.Right,
+                                    Symbol = i
+                                };
+                                current.Left = node;
                             }
                         }
                     }
@@ -166,7 +180,7 @@ namespace BlackHole.Library
             return allBitsLength;
         }
 
-        public void Decompress(Stream input, Stream output, HuffmanNode root)
+        public void Decompress(Stream input, Stream output, long bitsLength, HuffmanNode root)
         {
             if (input == null)
                 throw new ArgumentNullException("input");
@@ -175,12 +189,42 @@ namespace BlackHole.Library
             if (root == null)
                 throw new ArgumentNullException("root");
 
-            var bitReader = new BitReadStream(input);
-            byte? b = null;
-            while ((b = bitReader.ReadBit()) != null)
-            {
+            var bitReader = new BitReadStream(input, bitsLength);
 
-            }
+            var buf = new byte[BUFFER_SIZE];
+            var index = 0;
+
+            byte? b = null;
+
+            do
+            {
+                var current = root;
+                while (current.Symbol == -1)
+                {
+                    b = bitReader.ReadBit();
+                    if (b == null)
+                        break;
+
+                    if (b == 1)
+                        current = current.Right;
+                    else if (b == 0)
+                        current = current.Left;
+                }
+                if (b != null)
+                {
+                    buf[index] = (byte)current.Symbol;
+                    index++;
+                }
+                if (index >= BUFFER_SIZE)
+                {
+                    output.Write(buf, 0, buf.Length);
+                    buf = new byte[BUFFER_SIZE];
+                    index = 0;
+                }
+            } while (b != null);
+
+            if (index != 0)
+                output.Write(buf, 0, index);
         }
 
     }

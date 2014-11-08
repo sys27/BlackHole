@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,9 +8,10 @@ using System.Threading.Tasks;
 namespace BlackHole.Library
 {
 
-    public class HuffmanNode : IComparable<HuffmanNode>
+    public class HuffmanNode /*: IComparable<HuffmanNode>*/
     {
 
+        private bool isSymbol;
         private short symbol;
         private long weight;
         private byte bit;
@@ -19,6 +21,7 @@ namespace BlackHole.Library
 
         internal HuffmanNode()
         {
+            this.isSymbol = false;
             this.symbol = -1;
         }
 
@@ -27,12 +30,14 @@ namespace BlackHole.Library
 
         public HuffmanNode(short symbol, long weight)
         {
+            this.isSymbol = true;
             this.symbol = symbol;
             this.weight = weight;
         }
 
         public HuffmanNode(HuffmanNode left, HuffmanNode right)
         {
+            this.isSymbol = false;
             this.symbol = (short)(left.symbol + right.symbol);
             this.weight = left.weight + right.weight;
 
@@ -47,16 +52,27 @@ namespace BlackHole.Library
 
         public override string ToString()
         {
-            return string.Format("{0}: {1}, Weight: {2}", symbol, (char)symbol, weight);
+            if (isSymbol)
+                return string.Format("{0}: {1}, Weight: {2}", symbol, (char)symbol, weight);
+
+            return string.Format("Not symbol, Weight: {0}", weight);
         }
 
-        public int CompareTo(HuffmanNode other)
+        public static int Compare(HuffmanNode x, HuffmanNode y)
         {
-            var result = weight.CompareTo(other.weight);
-            if (result != 0)
-                return result;
+            return x.weight.CompareTo(y.weight);
+        }
 
-            return symbol.CompareTo(other.symbol);
+        public bool IsSymbol
+        {
+            get
+            {
+                return isSymbol;
+            }
+            internal set
+            {
+                isSymbol = value;
+            }
         }
 
         public short Symbol

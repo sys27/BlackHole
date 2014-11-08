@@ -15,16 +15,17 @@ namespace BlackHole.Library
 
         public HuffmanCode() { }
 
-        private HuffmanNode BuildTree(SortedSet<HuffmanNode> sortedWeights)
+        private HuffmanNode BuildTree(List<HuffmanNode> sortedWeights)
         {
             while (sortedWeights.Count > 1)
             {
-                var firstMin = sortedWeights.Min;
+                var firstMin = sortedWeights.First();
                 sortedWeights.Remove(firstMin);
-                var secondMin = sortedWeights.Min;
+                var secondMin = sortedWeights.First();
                 sortedWeights.Remove(secondMin);
 
                 sortedWeights.Add(new HuffmanNode(firstMin, secondMin));
+                sortedWeights.Sort(HuffmanNode.Compare);
             }
 
             return sortedWeights.First();
@@ -75,10 +76,11 @@ namespace BlackHole.Library
                 for (int i = 0; i < count; i++)
                     weights[buf[i]]++;
 
-            var sortedWeights = new SortedSet<HuffmanNode>();
+            var sortedWeights = new List<HuffmanNode>();
             for (int i = 0; i < weights.Length; i++)
                 if (weights[i] > 0)
                     sortedWeights.Add(new HuffmanNode((short)i, weights[i]));
+            sortedWeights.Sort(HuffmanNode.Compare);
             var symbols = sortedWeights.ToArray();
             var root = BuildTree(sortedWeights);
 
@@ -103,7 +105,7 @@ namespace BlackHole.Library
                             if (check != 1)
                             {
                                 if (current.Right == null)
-                                    current.Right = new HuffmanNode { Parent = current };
+                                    current.Right = new HuffmanNode { Parent = current, IsSymbol = false };
 
                                 current = current.Right;
                             }
@@ -114,7 +116,8 @@ namespace BlackHole.Library
                                     Parent = current,
                                     Left = current.Right == null ? null : current.Right.Left,
                                     Right = current.Right == null ? null : current.Right.Right,
-                                    Symbol = i
+                                    Symbol = i,
+                                    IsSymbol = true
                                 };
                                 current.Right = node;
                             }
@@ -124,7 +127,7 @@ namespace BlackHole.Library
                             if (check != 1)
                             {
                                 if (current.Left == null)
-                                    current.Left = new HuffmanNode { Parent = current };
+                                    current.Left = new HuffmanNode { Parent = current, IsSymbol = false };
 
                                 current = current.Left;
                             }
@@ -135,7 +138,8 @@ namespace BlackHole.Library
                                     Parent = current,
                                     Left = current.Left == null ? null : current.Left.Left,
                                     Right = current.Left == null ? null : current.Left.Right,
-                                    Symbol = i
+                                    Symbol = i,
+                                    IsSymbol = true
                                 };
                                 current.Left = node;
                             }

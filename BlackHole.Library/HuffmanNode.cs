@@ -22,11 +22,8 @@ namespace BlackHole.Library
         internal HuffmanNode()
         {
             this.isSymbol = false;
-            this.symbol = -1;
+            //this.symbol = -1;
         }
-
-        public HuffmanNode(long weight)
-            : this(-1, weight) { }
 
         public HuffmanNode(short symbol, long weight)
         {
@@ -38,7 +35,7 @@ namespace BlackHole.Library
         public HuffmanNode(HuffmanNode left, HuffmanNode right)
         {
             this.isSymbol = false;
-            this.symbol = (short)(left.symbol + right.symbol);
+            //this.symbol = (short)(left.symbol + right.symbol);
             this.weight = left.weight + right.weight;
 
             this.left = left;

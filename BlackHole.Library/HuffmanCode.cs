@@ -203,7 +203,7 @@ namespace BlackHole.Library
             do
             {
                 var current = root;
-                while (current.Symbol == -1)
+                while (!current.IsSymbol)
                 {
                     b = bitReader.ReadBit();
                     if (b == null)
@@ -214,11 +214,13 @@ namespace BlackHole.Library
                     else if (b == 0)
                         current = current.Left;
                 }
+
                 if (b != null)
                 {
                     buf[index] = (byte)current.Symbol;
                     index++;
                 }
+
                 if (index >= BUFFER_SIZE)
                 {
                     output.Write(buf, 0, buf.Length);

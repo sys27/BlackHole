@@ -53,13 +53,10 @@ namespace BlackHole.Library
                 leftBits = 7;
                 currentIndex++;
 
-                if (currentIndex >= count)
+                if (currentIndex >= count && currentBitsLength < bitsLength)
                 {
                     count = Read(buf, 0, buf.Length);
                     currentIndex = 0;
-
-                    if (count == 0)
-                        return null;
                 }
             }
 

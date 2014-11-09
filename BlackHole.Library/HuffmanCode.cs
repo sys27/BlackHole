@@ -167,6 +167,8 @@ namespace BlackHole.Library
             var buf = new byte[BUFFER_SIZE];
             int count;
 
+            long index = 0;
+
             input.Position = 0;
             var bitOutput = new BitWriteStream(output);
             long allBitsLength = 0;
@@ -177,6 +179,8 @@ namespace BlackHole.Library
                     var code = codes.ElementAt(buf[i]);
                     bitOutput.WriteBits(code);
                     allBitsLength += code.Length;
+
+                    index++;
                 }
             }
             bitOutput.Flush();

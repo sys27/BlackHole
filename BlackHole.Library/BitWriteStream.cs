@@ -114,6 +114,7 @@ namespace BlackHole.Library
         {
             Write(buf, 0, (int)Math.Ceiling(bitLength / 8.0));
             stream.Flush();
+            buf = new byte[BUFFER_SIZE];
             bitLength = 0;
         }
 

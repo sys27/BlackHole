@@ -10,7 +10,7 @@ namespace BlackHole.Library
     public class SymbolCode
     {
 
-        private ushort bits;
+        private uint bits;
         private byte lenght;
 
         public SymbolCode() { }
@@ -31,7 +31,7 @@ namespace BlackHole.Library
 
         public void SetBit(byte bit)
         {
-            bits |= (ushort)(bit << lenght);
+            bits |= (uint)(bit << lenght);
             lenght++;
         }
 
@@ -44,7 +44,7 @@ namespace BlackHole.Library
             lenght--;
         }
 
-        public ushort Bits
+        public uint Bits
         {
             get
             {

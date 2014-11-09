@@ -143,7 +143,7 @@ namespace BlackHole.Library
                 for (int j = 0; j < codesCount; j++)
                 {
                     var symbol = br.ReadByte();
-                    var bits = br.ReadUInt16();
+                    var bits = br.ReadUInt32();
                     var length = br.ReadByte();
 
                     codes[symbol] = new SymbolCode { Bits = bits, Length = length };

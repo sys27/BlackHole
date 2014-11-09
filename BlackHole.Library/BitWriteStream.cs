@@ -49,13 +49,13 @@ namespace BlackHole.Library
             WriteBits(code.Bits, code.Length);
         }
 
-        public void WriteBits(int bits, byte length)
+        public void WriteBits(uint bits, byte length)
         {
             if (buf == null)
                 buf = new byte[BUFFER_SIZE];
 
-            var occupBits = bitLength % 8;
-            var leftBits = 8 - occupBits;
+            byte occupBits = (byte)(bitLength % 8);
+            byte leftBits = (byte)(8 - occupBits);
             var index = bitLength / 8;
 
             if (leftBits >= length)
@@ -64,16 +64,45 @@ namespace BlackHole.Library
             }
             else
             {
-                var newLength = length - leftBits;
-                buf[index] |= (byte)(bits >> newLength);
-                index++;
-                if (index >= buf.Length)
-                {
-                    Flush();
-                    index = 0;
-                }
+                //var newLength = length - leftBits;
+                //buf[index] |= (byte)(bits >> newLength);
+                //index++;
+                //if (index >= buf.Length)
+                //{
+                //    Flush();
+                //    index = 0;
+                //}
 
-                buf[index] |= (byte)(bits << (8 - newLength));
+                //buf[index] |= (byte)(bits << (8 - newLength));
+
+
+                // --------------
+                var shift = length - leftBits;
+                short tempLength = length;
+                while (true)
+                {
+                    if (tempLength > leftBits)
+                        buf[index] |= (byte)((bits >> shift) & (ushort.MaxValue >> (sizeof(short) * 8 - leftBits)));
+                    else
+                        buf[index] |= (byte)(bits << shift);
+
+                    tempLength -= leftBits;
+                    if (tempLength <= 0)
+                        break;
+
+                    index++;
+                    if (index >= buf.Length)
+                    {
+                        Flush();
+                        index = 0;
+                    }
+
+                    leftBits = 8;
+                    if (shift > 8)
+                        shift -= leftBits;
+                    else
+                        shift = 8 - shift;
+                }
             }
 
             bitLength += length;

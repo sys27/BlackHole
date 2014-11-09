@@ -52,7 +52,7 @@ namespace BlackHole.Library
             if (isSymbol)
                 return string.Format("{0}: {1}, Weight: {2}", symbol, (char)symbol, weight);
 
-            return string.Format("Not symbol, Weight: {0}", weight);
+            return "Not a symbol.";
         }
 
         public static int Compare(HuffmanNode x, HuffmanNode y)

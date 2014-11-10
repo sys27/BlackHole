@@ -1,5 +1,6 @@
 ﻿using BlackHole.Library;
 using Microsoft.Win32;
+using Ookii.Dialogs.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -34,6 +35,7 @@ namespace BlackHole
         public static RoutedCommand AddCommand = new RoutedCommand();
         public static RoutedCommand RemoveCommand = new RoutedCommand();
 
+        private string fileToArchive;
         private ObservableCollection<FileViewModel> files;
         private Archiver archiver;
 
@@ -67,6 +69,7 @@ namespace BlackHole
             if (sfd.ShowDialog(this) == true)
             {
                 archiver.Create(files.Select(file => file.FullName).ToArray(), sfd.FileName);
+                fileToArchive = sfd.FileName;
             }
         }
 
@@ -77,7 +80,13 @@ namespace BlackHole
 
         private void ExtractAllCommand_Execute(object o, ExecutedRoutedEventArgs args)
         {
-
+            var fbd = new VistaFolderBrowserDialog
+            {
+            };
+            if (fbd.ShowDialog(this) == true)
+            {
+                archiver.ExtractAll(fileToArchive, fbd.SelectedPath);
+            }
         }
 
         private void ExtractAllCommand_CanExecute(object o, CanExecuteRoutedEventArgs args)

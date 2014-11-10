@@ -13,8 +13,7 @@ namespace BlackHoleCL
     {
 
         private static void PrintHelp()
-        {
-            Console.WriteLine("Недостатня кількість аргументів.");
+        {            
             Console.WriteLine("Використання BlackHole <параметри> <список файлів>");
 
             Console.WriteLine("Параметри:");
@@ -28,26 +27,27 @@ namespace BlackHoleCL
         {
             //if (args.Length == 0)
             //{
+            //    Console.WriteLine("Недостатня кількість аргументів.\n");
             //    PrintHelp();
             //    return;
             //}
 
             //var command = args[0];
-            //if (command == "-h" || command == "-?")
+            //if (command == "-h" || command == "/h" || command == "-?" || command == "/?")
             //{
             //    PrintHelp();
             //}
-            //else if (command == "-c" && args.Length >= 2)
+            //else if ((command == "-c" || command == "/c") && args.Length >= 2)
             //{
 
             //}
-            //else if (command == "-d" && args.Length >= 2)
+            //else if ((command == "-d" || command == "/d") && args.Length >= 2)
             //{
 
             //}
             //else
             //{
-            //    Console.WriteLine();
+            //    Console.WriteLine("Введено неправильні аргументи.\n");
             //    PrintHelp();
             //}
 

@@ -53,7 +53,7 @@ namespace BlackHole.Library
                     allCodes[i] = codes;
 
                     var originalSize = new FileInfo(inputFile).Length;
-                    var file = new ArchivedFile(inputFile, originalSize, 0, 0, codes);
+                    var file = new ArchivedFile(Path.GetFileName(inputFile), originalSize, 0, 0, codes);
 
                     bw.Write(file.Name);
                     bw.Write(file.OriginalSize);

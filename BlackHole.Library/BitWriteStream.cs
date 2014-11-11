@@ -61,30 +61,24 @@ namespace BlackHole.Library
             if (leftBits >= length)
             {
                 buf[index] |= (byte)(bits << (leftBits - length));
+                bitLength += length;
             }
             else
             {
-                //var newLength = length - leftBits;
-                //buf[index] |= (byte)(bits >> newLength);
-                //index++;
-                //if (index >= buf.Length)
-                //{
-                //    Flush();
-                //    index = 0;
-                //}
-
-                //buf[index] |= (byte)(bits << (8 - newLength));
-
-
-                // --------------
                 var shift = length - leftBits;
                 short tempLength = length;
                 while (true)
                 {
                     if (tempLength > leftBits)
+                    {
                         buf[index] |= (byte)((bits >> shift) & (ushort.MaxValue >> (sizeof(short) * 8 - leftBits)));
+                        bitLength += leftBits;
+                    }
                     else
+                    {
                         buf[index] |= (byte)(bits << shift);
+                        bitLength += 8 - shift;
+                    }
 
                     tempLength -= leftBits;
                     if (tempLength <= 0)
@@ -105,8 +99,7 @@ namespace BlackHole.Library
                 }
             }
 
-            bitLength += length;
-            if (bitLength == MAX_BITS)
+            if (bitLength >= MAX_BITS)
                 Flush();
         }
 

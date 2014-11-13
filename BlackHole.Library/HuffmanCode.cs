@@ -213,7 +213,7 @@ namespace BlackHole.Library
 
                     if (b == 1)
                         current = current.Right;
-                    else if (b == 0)
+                    else
                         current = current.Left;
                 }
 

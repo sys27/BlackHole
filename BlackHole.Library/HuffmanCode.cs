@@ -111,7 +111,7 @@ namespace BlackHole.Library
                             }
                             else
                             {
-                                var node = new HuffmanNode
+                                current.Right = new HuffmanNode
                                 {
                                     Parent = current,
                                     Left = current.Right == null ? null : current.Right.Left,
@@ -119,7 +119,6 @@ namespace BlackHole.Library
                                     Symbol = i,
                                     IsSymbol = true
                                 };
-                                current.Right = node;
                             }
                         }
                         else
@@ -133,7 +132,7 @@ namespace BlackHole.Library
                             }
                             else
                             {
-                                var node = new HuffmanNode
+                                current.Left = new HuffmanNode
                                 {
                                     Parent = current,
                                     Left = current.Left == null ? null : current.Left.Left,
@@ -141,7 +140,6 @@ namespace BlackHole.Library
                                     Symbol = i,
                                     IsSymbol = true
                                 };
-                                current.Left = node;
                             }
                         }
                     }

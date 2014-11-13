@@ -26,9 +26,7 @@ namespace BlackHole.Library
                 throw new ArgumentNullException("outputFile");
 
             using (var output = new FileStream(outputFile, FileMode.Create, FileAccess.Write, FileShare.None))
-            {
-                Create(inputFiles, output);
-            }
+	            Create(inputFiles, output);
         }
 
         public void Create(string[] inputFiles, Stream output)
@@ -137,9 +135,8 @@ namespace BlackHole.Library
 
                         codes[symbol] = new SymbolCode { Bits = bits, Length = length };
                     }
-
-                    var file = new ArchivedFile(name, originalSize, bitsLength, offset, codes);
-                    archive.Add(file);
+                    
+                    archive.Add(new ArchivedFile(name, originalSize, bitsLength, offset, codes));
                 }
 
                 return archive;

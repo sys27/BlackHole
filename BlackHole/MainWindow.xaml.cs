@@ -64,7 +64,8 @@ namespace BlackHole
         {
             var sfd = new SaveFileDialog
             {
-
+                AddExtension = true,
+                Filter = "BlackHole Archive (*.bh)|*.bh"
             };
             if (sfd.ShowDialog(this) == true)
             {

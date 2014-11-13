@@ -68,6 +68,8 @@ namespace BlackHole
             };
             if (sfd.ShowDialog(this) == true)
             {
+                var processingWindow = new ProcessingWindow { Owner = this };
+                processingWindow.ShowDialog();
                 archiver.Create(files.Select(file => file.FullName).ToArray(), sfd.FileName);
                 fileToArchive = sfd.FileName;
             }

@@ -14,14 +14,15 @@ using System.Windows.Shapes;
 
 namespace BlackHole
 {
-    /// <summary>
-    /// Interaction logic for Processing.xaml
-    /// </summary>
-    public partial class Processing : Window
+
+    public partial class ProcessingWindow : Window
     {
-        public Processing()
+
+        public ProcessingWindow()
         {
             InitializeComponent();
         }
+
     }
+
 }

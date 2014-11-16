@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -70,9 +71,9 @@ namespace BlackHole
             if (sfd.ShowDialog(this) == true)
             {
                 var processingWindow = new ProcessingWindow { Owner = this };
-                processingWindow.ShowDialog();
-                archiver.Create(files.Select(file => file.FullName).ToArray(), sfd.FileName);
                 fileToArchive = sfd.FileName;
+                processingWindow.Compress(files.Select(file => file.FullName), sfd.FileName, new CancellationTokenSource());
+                processingWindow.ShowDialog();
             }
         }
 
@@ -88,7 +89,9 @@ namespace BlackHole
             };
             if (fbd.ShowDialog(this) == true)
             {
-                archiver.ExtractAll(fileToArchive, fbd.SelectedPath);
+                var processingWindow = new ProcessingWindow { Owner = this };
+                processingWindow.Decompress(fileToArchive, fbd.SelectedPath, new CancellationTokenSource());
+                processingWindow.ShowDialog();
             }
         }
 

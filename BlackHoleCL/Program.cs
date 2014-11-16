@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BlackHoleCL
@@ -66,7 +67,7 @@ namespace BlackHoleCL
                     }
                 }
 
-                archiver.Create(files.ToArray(), outputFile);
+                //archiver.Create(files.ToArray(), outputFile, new CancellationTokenSource());
             }
             else if ((command == "-d" || command == "/d") && args.Length >= 2)
             {
@@ -88,7 +89,7 @@ namespace BlackHoleCL
                     }
                 }
 
-                archiver.ExtractAll(inputFile, outputFolder);
+                //archiver.ExtractAll(inputFile, outputFolder);
             }
             else
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BlackHole.Library
@@ -18,7 +19,7 @@ namespace BlackHole.Library
             huffman = new HuffmanCode();
         }
 
-        public void Create(string[] inputFiles, string outputFile)
+        public async Task Create(string[] inputFiles, string outputFile, CancellationTokenSource token)
         {
             if (inputFiles == null)
                 throw new ArgumentNullException("inputFile");
@@ -26,89 +27,99 @@ namespace BlackHole.Library
                 throw new ArgumentNullException("outputFile");
 
             using (var output = new FileStream(outputFile, FileMode.Create, FileAccess.Write, FileShare.None))
-	            Create(inputFiles, output);
+                await Create(inputFiles, output, token);
         }
 
-        public void Create(string[] inputFiles, Stream output)
+        public async Task Create(string[] inputFiles, Stream output, CancellationTokenSource tokenSource)
         {
             if (inputFiles == null || inputFiles.Length == 0)
                 throw new ArgumentNullException("inputFile");
             if (output == null)
                 throw new ArgumentNullException("output");
 
-            using (var bw = new BinaryWriter(output, new UTF8Encoding(), true))
+            await Task.Run(async () =>
             {
-                var archive = new Archive();
-                var allCodes = new IEnumerable<SymbolCode>[inputFiles.Length];
-                var beginPosition = output.Position;
-                bw.Seek(4, SeekOrigin.Current);
+                var token = tokenSource.Token;
+                token.ThrowIfCancellationRequested();
 
-                for (int i = 0; i < inputFiles.Length; i++)
+                using (var bw = new BinaryWriter(output, new UTF8Encoding(), true))
                 {
-                    var inputFile = inputFiles[i];
-                    using (var input = File.OpenRead(inputFile))
+                    var archive = new Archive();
+                    var allCodes = new IEnumerable<SymbolCode>[inputFiles.Length];
+                    var beginPosition = output.Position;
+                    bw.Seek(4, SeekOrigin.Current);
+
+                    for (int i = 0; i < inputFiles.Length; i++)
                     {
-                        var codes = huffman.GetCodes(input).ToArray();
-                        allCodes[i] = codes;
+                        token.ThrowIfCancellationRequested();
 
-                        var originalSize = new FileInfo(inputFile).Length;
-                        var file = new ArchivedFile(Path.GetFileName(inputFile), originalSize, 0, 0, codes);
-
-                        bw.Write(file.Name);
-                        bw.Write(file.OriginalSize);
-
-                        file.InfoPosition = output.Position;
-                        bw.Seek(16, SeekOrigin.Current);
-
-                        var codesPosition = output.Position;
-                        bw.Seek(2, SeekOrigin.Current);
-                        short codesCount = 0;
-                        for (int j = 0; j < codes.Length; j++)
+                        var inputFile = inputFiles[i];
+                        using (var input = File.OpenRead(inputFile))
                         {
-                            if (codes[j] != null)
+                            var codes = huffman.GetCodes(input).ToArray();
+                            allCodes[i] = codes;
+
+                            var originalSize = new FileInfo(inputFile).Length;
+                            var file = new ArchivedFile(Path.GetFileName(inputFile), originalSize, 0, 0, codes);
+
+                            bw.Write(file.Name);
+                            bw.Write(file.OriginalSize);
+
+                            file.InfoPosition = output.Position;
+                            bw.Seek(16, SeekOrigin.Current);
+
+                            var codesPosition = output.Position;
+                            bw.Seek(2, SeekOrigin.Current);
+                            short codesCount = 0;
+                            for (int j = 0; j < codes.Length; j++)
                             {
-                                bw.Write((byte)j);
-                                bw.Write(codes[j].Bits);
-                                bw.Write(codes[j].Length);
-                                codesCount++;
+                                if (codes[j] != null)
+                                {
+                                    bw.Write((byte)j);
+                                    bw.Write(codes[j].Bits);
+                                    bw.Write(codes[j].Length);
+                                    codesCount++;
+                                }
                             }
+                            var originalPosition = output.Position;
+                            output.Position = codesPosition;
+                            bw.Write(codesCount);
+                            output.Position = originalPosition;
+
+                            archive.Add(file);
                         }
-                        var originalPosition = output.Position;
-                        output.Position = codesPosition;
-                        bw.Write(codesCount);
-                        output.Position = originalPosition;
-
-                        archive.Add(file);
                     }
-                }
 
-                for (int i = 0; i < inputFiles.Length; i++)
-                {
-                    var inputFile = inputFiles[i];
-                    using (var input = File.OpenRead(inputFile))
+                    for (int i = 0; i < inputFiles.Length; i++)
                     {
-                        var codes = allCodes[i];
-                        var file = archive[i];
+                        token.ThrowIfCancellationRequested();
 
-                        var offset = output.Position;
-                        var bitsLength = huffman.Compress(input, output, codes);
-                        var compressedPosition = output.Position;
-                        var lastArchive = archive.LastOrDefault();
-                        file.BitsLength = bitsLength;
-                        file.Offset = offset;
+                        var inputFile = inputFiles[i];
+                        using (var input = File.OpenRead(inputFile))
+                        {
+                            var codes = allCodes[i];
+                            var file = archive[i];
 
-                        output.Position = file.InfoPosition;
-                        bw.Write(file.BitsLength);
-                        bw.Write(file.Offset);
-                        output.Position = compressedPosition;
+                            var offset = output.Position;
+                            var bitsLength = await huffman.Compress(input, output, codes, tokenSource);
+                            var compressedPosition = output.Position;
+                            var lastArchive = archive.LastOrDefault();
+                            file.BitsLength = bitsLength;
+                            file.Offset = offset;
+
+                            output.Position = file.InfoPosition;
+                            bw.Write(file.BitsLength);
+                            bw.Write(file.Offset);
+                            output.Position = compressedPosition;
+                        }
                     }
-                }
 
-                var endPosition = output.Position;
-                output.Position = beginPosition;
-                bw.Write(archive.FilesCount);
-                output.Position = endPosition;
-            }
+                    var endPosition = output.Position;
+                    output.Position = beginPosition;
+                    bw.Write(archive.FilesCount);
+                    output.Position = endPosition;
+                }
+            }, tokenSource.Token);
         }
 
         private Archive ReadArchiveInfo(Stream input)
@@ -135,7 +146,7 @@ namespace BlackHole.Library
 
                         codes[symbol] = new SymbolCode { Bits = bits, Length = length };
                     }
-                    
+
                     archive.Add(new ArchivedFile(name, originalSize, bitsLength, offset, codes));
                 }
 
@@ -143,58 +154,64 @@ namespace BlackHole.Library
             }
         }
 
-        private void ExtractFile(Stream input, ArchivedFile file, string folder)
+        private async Task ExtractFile(Stream input, ArchivedFile file, string folder, CancellationTokenSource tokenSource)
         {
             var root = huffman.BuildTree(file.Codes);
             using (var output = new FileStream(Path.Combine(folder, file.Name), FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 input.Seek(file.Offset, SeekOrigin.Begin);
-                huffman.Decompress(input, output, file.BitsLength, root);
+                await huffman.Decompress(input, output, file.BitsLength, root, tokenSource);
             }
         }
 
-        public void Extract(string inputFile, string fileName, string folder)
+        public async Task Extract(string inputFile, string fileName, string folder, CancellationTokenSource tokenSource)
         {
             if (string.IsNullOrWhiteSpace(inputFile))
                 throw new ArgumentNullException("inputFile");
 
             using (var input = File.OpenRead(inputFile))
-                Extract(input, fileName, folder);
+                await Extract(input, fileName, folder, tokenSource);
         }
 
-        public void Extract(Stream input, string fileName, string folder)
+        public async Task Extract(Stream input, string fileName, string folder, CancellationTokenSource tokenSource)
         {
             if (input == null)
                 throw new ArgumentNullException("input");
 
-            var archive = ReadArchiveInfo(input);
+            await Task.Run(async () =>
+            {
+                var archive = ReadArchiveInfo(input);
 
-            var file = archive.Where(f => f.Name == fileName).FirstOrDefault();
-            if (file == null)
-                // todo: exception
-                throw new Exception();
+                var file = archive.Where(f => f.Name == fileName).FirstOrDefault();
+                if (file == null)
+                    // todo: exception
+                    throw new Exception();
 
-            ExtractFile(input, file, folder);
+                await ExtractFile(input, file, folder, tokenSource);
+            });
         }
 
-        public void ExtractAll(string inputFile, string folder)
+        public async Task ExtractAll(string inputFile, string folder, CancellationTokenSource tokenSource)
         {
             if (string.IsNullOrWhiteSpace(inputFile))
                 throw new ArgumentNullException("inputFile");
 
             using (var input = File.OpenRead(inputFile))
-                ExtractAll(input, folder);
+                await ExtractAll(input, folder, tokenSource);
         }
 
-        public void ExtractAll(Stream input, string folder)
+        public async Task ExtractAll(Stream input, string folder, CancellationTokenSource tokenSource)
         {
             if (input == null)
                 throw new ArgumentNullException("input");
 
-            var archive = ReadArchiveInfo(input);
+            await Task.Run(async () =>
+            {
+                var archive = ReadArchiveInfo(input);
 
-            foreach (var file in archive)
-                ExtractFile(input, file, folder);
+                foreach (var file in archive)
+                    await ExtractFile(input, file, folder, tokenSource);
+            }, tokenSource.Token);
         }
 
     }

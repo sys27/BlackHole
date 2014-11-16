@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BlackHole.Library
@@ -149,7 +150,7 @@ namespace BlackHole.Library
             return root;
         }
 
-        public long Compress(Stream input, Stream output, IEnumerable<SymbolCode> codes)
+        public async Task<long> Compress(Stream input, Stream output, IEnumerable<SymbolCode> codes, CancellationTokenSource tokenSource)
         {
             if (input == null)
                 throw new ArgumentNullException("input");
@@ -162,31 +163,39 @@ namespace BlackHole.Library
                 // todo: exception
                 throw new InvalidOperationException();
 
-            var buf = new byte[BUFFER_SIZE];
-            int count;
-
-            long index = 0;
-
-            input.Position = 0;
-            var bitOutput = new BitWriteStream(output);
-            long allBitsLength = 0;
-            while ((count = input.Read(buf, 0, buf.Length)) > 0)
+            return await Task.Run<long>(() =>
             {
-                for (int i = 0; i < count; i++)
+                var token = tokenSource.Token;
+                token.ThrowIfCancellationRequested();
+
+                var buf = new byte[BUFFER_SIZE];
+                int count;
+
+                long index = 0;
+
+                input.Position = 0;
+                var bitOutput = new BitWriteStream(output);
+                long allBitsLength = 0;
+                while ((count = input.Read(buf, 0, buf.Length)) > 0)
                 {
-                    var code = codes.ElementAt(buf[i]);
-                    bitOutput.WriteBits(code);
-                    allBitsLength += code.Length;
+                    token.ThrowIfCancellationRequested();
 
-                    index++;
+                    for (int i = 0; i < count; i++)
+                    {
+                        var code = codes.ElementAt(buf[i]);
+                        bitOutput.WriteBits(code);
+                        allBitsLength += code.Length;
+
+                        index++;
+                    }
                 }
-            }
-            bitOutput.Flush();
+                bitOutput.Flush();
 
-            return allBitsLength;
+                return allBitsLength;
+            }, tokenSource.Token);
         }
 
-        public void Decompress(Stream input, Stream output, long bitsLength, HuffmanNode root)
+        public async Task Decompress(Stream input, Stream output, long bitsLength, HuffmanNode root, CancellationTokenSource tokenSource)
         {
             if (input == null)
                 throw new ArgumentNullException("input");
@@ -195,44 +204,52 @@ namespace BlackHole.Library
             if (root == null)
                 throw new ArgumentNullException("root");
 
-            var bitReader = new BitReadStream(input, bitsLength);
-
-            var buf = new byte[BUFFER_SIZE];
-            var index = 0;
-
-            byte? b = null;
-
-            do
+            await Task.Run(() =>
             {
-                var current = root;
-                while (!current.IsSymbol)
+                var token = tokenSource.Token;
+                token.ThrowIfCancellationRequested();
+
+                var bitReader = new BitReadStream(input, bitsLength);
+
+                var buf = new byte[BUFFER_SIZE];
+                var index = 0;
+
+                byte? b = null;
+
+                do
                 {
-                    b = bitReader.ReadBit();
-                    if (b == null)
-                        break;
+                    var current = root;
+                    while (!current.IsSymbol)
+                    {
+                        b = bitReader.ReadBit();
+                        if (b == null)
+                            break;
 
-                    if (b == 1)
-                        current = current.Right;
-                    else
-                        current = current.Left;
-                }
+                        if (b == 1)
+                            current = current.Right;
+                        else
+                            current = current.Left;
+                    }
 
-                if (b != null)
-                {
-                    buf[index] = (byte)current.Symbol;
-                    index++;
-                }
+                    if (b != null)
+                    {
+                        buf[index] = (byte)current.Symbol;
+                        index++;
+                    }
 
-                if (index >= BUFFER_SIZE)
-                {
-                    output.Write(buf, 0, buf.Length);
-                    buf = new byte[BUFFER_SIZE];
-                    index = 0;
-                }
-            } while (b != null);
+                    if (index >= BUFFER_SIZE)
+                    {
+                        token.ThrowIfCancellationRequested();
 
-            if (index != 0)
-                output.Write(buf, 0, index);
+                        output.Write(buf, 0, buf.Length);
+                        buf = new byte[BUFFER_SIZE];
+                        index = 0;
+                    }
+                } while (b != null);
+
+                if (index != 0)
+                    output.Write(buf, 0, index);
+            }, tokenSource.Token);
         }
 
     }

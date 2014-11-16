@@ -1,7 +1,9 @@
-﻿using System;
+﻿using BlackHole.Library;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,9 +20,63 @@ namespace BlackHole
     public partial class ProcessingWindow : Window
     {
 
+        public static RoutedCommand CancelCommand = new RoutedCommand();
+
+        private Archiver archiver;
+
+        private CancellationTokenSource compressTokenSource;
+        private CancellationTokenSource decompressTokenSource;
+
         public ProcessingWindow()
         {
+            archiver = new Archiver();
+
             InitializeComponent();
+        }
+
+        public async void Compress(IEnumerable<string> files, string outputFile, CancellationTokenSource token)
+        {
+            compressTokenSource = token;
+
+            try
+            {
+                await archiver.Create(files.ToArray(), outputFile, token);
+            }
+            catch (OperationCanceledException)
+            {
+
+            }
+
+            this.DialogResult = true;
+            this.Close();
+        }
+
+        public async Task Decompress(string file, string folder, CancellationTokenSource token)
+        {
+            decompressTokenSource = token;
+
+            try
+            {
+                await archiver.ExtractAll(file, folder, token);
+            }
+            catch (OperationCanceledException)
+            {
+
+            }
+
+            this.DialogResult = true;
+            this.Close();
+        }
+
+        private void CancelCommand_Executed(object o, ExecutedRoutedEventArgs args)
+        {
+            if (compressTokenSource != null)
+                compressTokenSource.Cancel();
+            if (decompressTokenSource != null)
+                decompressTokenSource.Cancel();
+
+            this.DialogResult = false;
+            this.Close();
         }
 
     }

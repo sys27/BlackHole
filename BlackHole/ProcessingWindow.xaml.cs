@@ -47,8 +47,11 @@ namespace BlackHole
 
             }
 
-            this.DialogResult = true;
-            this.Close();
+            if (closeAfterCheckBox.IsChecked == true)
+            {
+                this.DialogResult = true;
+                this.Close();
+            }
         }
 
         public async Task Decompress(string file, string folder, CancellationTokenSource token)
@@ -64,8 +67,11 @@ namespace BlackHole
 
             }
 
-            this.DialogResult = true;
-            this.Close();
+            if (closeAfterCheckBox.IsChecked == true)
+            {
+                this.DialogResult = true;
+                this.Close();
+            }
         }
 
         private void CancelCommand_Executed(object o, ExecutedRoutedEventArgs args)

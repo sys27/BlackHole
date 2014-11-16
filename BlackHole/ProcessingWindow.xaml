@@ -20,7 +20,7 @@
         <Label Content="100%" Margin="0,0,10,55" VerticalAlignment="Bottom" HorizontalAlignment="Right" TextBlock.TextAlignment="Right" />
         <ProgressBar Margin="10,0,10,35" Height="20" VerticalAlignment="Bottom" />
 
-        <CheckBox Content="Закрити після завершення" HorizontalAlignment="Left" Margin="90,0,0,12" Width="294" Height="15" VerticalAlignment="Bottom" />
+        <CheckBox x:Name="closeAfterCheckBox" Content="Закрити після завершення" HorizontalAlignment="Left" Margin="90,0,0,12" Width="294" Height="15" VerticalAlignment="Bottom" />
         <Button Content="Статистика" Margin="10,0,0,10" Height="20" VerticalAlignment="Bottom" IsCancel="True" HorizontalAlignment="Left" Width="75" />
         <Button Content="Відміна" Margin="0,0,10,10" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" IsCancel="True" Command="local:ProcessingWindow.CancelCommand" />
     </Grid>

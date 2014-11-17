@@ -19,7 +19,7 @@ namespace BlackHole.Library
             huffman = new HuffmanCode();
         }
 
-        public async Task Create(string[] inputFiles, string outputFile, CancellationTokenSource token)
+        public async Task CreateAsync(string[] inputFiles, string outputFile, CancellationTokenSource tokenSource)
         {
             if (inputFiles == null)
                 throw new ArgumentNullException("inputFile");
@@ -27,10 +27,10 @@ namespace BlackHole.Library
                 throw new ArgumentNullException("outputFile");
 
             using (var output = new FileStream(outputFile, FileMode.Create, FileAccess.Write, FileShare.None))
-                await Create(inputFiles, output, token);
+                await CreateAsync(inputFiles, output, tokenSource);
         }
 
-        public async Task Create(string[] inputFiles, Stream output, CancellationTokenSource tokenSource)
+        public async Task CreateAsync(string[] inputFiles, Stream output, CancellationTokenSource tokenSource)
         {
             if (inputFiles == null || inputFiles.Length == 0)
                 throw new ArgumentNullException("inputFile");
@@ -154,7 +154,7 @@ namespace BlackHole.Library
             }
         }
 
-        private async Task ExtractFile(Stream input, ArchivedFile file, string folder, CancellationTokenSource tokenSource)
+        private async Task ExtractFileAsync(Stream input, ArchivedFile file, string folder, CancellationTokenSource tokenSource)
         {
             var root = huffman.BuildTree(file.Codes);
             using (var output = new FileStream(Path.Combine(folder, file.Name), FileMode.Create, FileAccess.Write, FileShare.None))
@@ -164,16 +164,16 @@ namespace BlackHole.Library
             }
         }
 
-        public async Task Extract(string inputFile, string fileName, string folder, CancellationTokenSource tokenSource)
+        public async Task ExtractAsync(string inputFile, string fileName, string folder, CancellationTokenSource tokenSource)
         {
             if (string.IsNullOrWhiteSpace(inputFile))
                 throw new ArgumentNullException("inputFile");
 
             using (var input = File.OpenRead(inputFile))
-                await Extract(input, fileName, folder, tokenSource);
+                await ExtractAsync(input, fileName, folder, tokenSource);
         }
 
-        public async Task Extract(Stream input, string fileName, string folder, CancellationTokenSource tokenSource)
+        public async Task ExtractAsync(Stream input, string fileName, string folder, CancellationTokenSource tokenSource)
         {
             if (input == null)
                 throw new ArgumentNullException("input");
@@ -187,20 +187,20 @@ namespace BlackHole.Library
                     // todo: exception
                     throw new Exception();
 
-                await ExtractFile(input, file, folder, tokenSource);
+                await ExtractFileAsync(input, file, folder, tokenSource);
             });
         }
 
-        public async Task ExtractAll(string inputFile, string folder, CancellationTokenSource tokenSource)
+        public async Task ExtractAllAsync(string inputFile, string folder, CancellationTokenSource tokenSource)
         {
             if (string.IsNullOrWhiteSpace(inputFile))
                 throw new ArgumentNullException("inputFile");
 
             using (var input = File.OpenRead(inputFile))
-                await ExtractAll(input, folder, tokenSource);
+                await ExtractAllAsync(input, folder, tokenSource);
         }
 
-        public async Task ExtractAll(Stream input, string folder, CancellationTokenSource tokenSource)
+        public async Task ExtractAllAsync(Stream input, string folder, CancellationTokenSource tokenSource)
         {
             if (input == null)
                 throw new ArgumentNullException("input");
@@ -210,7 +210,7 @@ namespace BlackHole.Library
                 var archive = ReadArchiveInfo(input);
 
                 foreach (var file in archive)
-                    await ExtractFile(input, file, folder, tokenSource);
+                    await ExtractFileAsync(input, file, folder, tokenSource);
             }, tokenSource.Token);
         }
 

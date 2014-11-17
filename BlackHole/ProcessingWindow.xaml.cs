@@ -40,7 +40,7 @@ namespace BlackHole
 
             try
             {
-                await archiver.Create(files.ToArray(), outputFile, token);
+                await archiver.CreateAsync(files.ToArray(), outputFile, token);
             }
             catch (OperationCanceledException)
             {
@@ -60,7 +60,7 @@ namespace BlackHole
 
             try
             {
-                await archiver.ExtractAll(file, folder, token);
+                await archiver.ExtractAllAsync(file, folder, token);
             }
             catch (OperationCanceledException)
             {

@@ -101,7 +101,7 @@ namespace BlackHole.Library
                             var file = archive[i];
 
                             var offset = output.Position;
-                            var bitsLength = await huffman.Compress(input, output, codes, tokenSource);
+                            var bitsLength = await huffman.CompressAsync(input, output, codes, tokenSource);
                             var compressedPosition = output.Position;
                             var lastArchive = archive.LastOrDefault();
                             file.BitsLength = bitsLength;
@@ -160,7 +160,7 @@ namespace BlackHole.Library
             using (var output = new FileStream(Path.Combine(folder, file.Name), FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 input.Seek(file.Offset, SeekOrigin.Begin);
-                await huffman.Decompress(input, output, file.BitsLength, root, tokenSource);
+                await huffman.DecompressAsync(input, output, file.BitsLength, root, tokenSource);
             }
         }
 

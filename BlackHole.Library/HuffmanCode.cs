@@ -150,7 +150,94 @@ namespace BlackHole.Library
             return root;
         }
 
-        public async Task<long> Compress(Stream input, Stream output, IEnumerable<SymbolCode> codes, CancellationTokenSource tokenSource)
+        private long InternalCompress(Stream input, Stream output, IEnumerable<SymbolCode> codes, CancellationTokenSource tokenSource)
+        {
+            var token = tokenSource.Token;
+            if (tokenSource != null)
+                token.ThrowIfCancellationRequested();
+
+            var buf = new byte[BUFFER_SIZE];
+            int count;
+
+            long index = 0;
+
+            input.Position = 0;
+            var bitOutput = new BitWriteStream(output);
+            long allBitsLength = 0;
+            while ((count = input.Read(buf, 0, buf.Length)) > 0)
+            {
+                if (tokenSource != null)
+                    token.ThrowIfCancellationRequested();
+
+                for (int i = 0; i < count; i++)
+                {
+                    var code = codes.ElementAt(buf[i]);
+                    bitOutput.WriteBits(code);
+                    allBitsLength += code.Length;
+
+                    index++;
+                }
+            }
+            bitOutput.Flush();
+
+            return allBitsLength;
+        }
+
+        private void InternalDecompress(Stream input, Stream output, long bitsLength, HuffmanNode root, CancellationTokenSource tokenSource)
+        {
+            var token = tokenSource.Token;
+            if (tokenSource != null)
+                token.ThrowIfCancellationRequested();
+
+            var bitReader = new BitReadStream(input, bitsLength);
+
+            var buf = new byte[BUFFER_SIZE];
+            var index = 0;
+
+            byte? b = null;
+
+            do
+            {
+                var current = root;
+                while (!current.IsSymbol)
+                {
+                    b = bitReader.ReadBit();
+                    if (b == null)
+                        break;
+
+                    if (b == 1)
+                        current = current.Right;
+                    else
+                        current = current.Left;
+                }
+
+                if (b != null)
+                {
+                    buf[index] = (byte)current.Symbol;
+                    index++;
+                }
+
+                if (index >= BUFFER_SIZE)
+                {
+                    if (tokenSource != null)
+                        token.ThrowIfCancellationRequested();
+
+                    output.Write(buf, 0, buf.Length);
+                    buf = new byte[BUFFER_SIZE];
+                    index = 0;
+                }
+            } while (b != null);
+
+            if (index != 0)
+                output.Write(buf, 0, index);
+        }
+
+        public long Compress(Stream input, Stream output, IEnumerable<SymbolCode> codes)
+        {
+            return InternalCompress(input, output, codes, null);
+        }
+
+        public async Task<long> CompressAsync(Stream input, Stream output, IEnumerable<SymbolCode> codes)
         {
             if (input == null)
                 throw new ArgumentNullException("input");
@@ -163,39 +250,31 @@ namespace BlackHole.Library
                 // todo: exception
                 throw new InvalidOperationException();
 
-            return await Task.Run<long>(() =>
-            {
-                var token = tokenSource.Token;
-                token.ThrowIfCancellationRequested();
-
-                var buf = new byte[BUFFER_SIZE];
-                int count;
-
-                long index = 0;
-
-                input.Position = 0;
-                var bitOutput = new BitWriteStream(output);
-                long allBitsLength = 0;
-                while ((count = input.Read(buf, 0, buf.Length)) > 0)
-                {
-                    token.ThrowIfCancellationRequested();
-
-                    for (int i = 0; i < count; i++)
-                    {
-                        var code = codes.ElementAt(buf[i]);
-                        bitOutput.WriteBits(code);
-                        allBitsLength += code.Length;
-
-                        index++;
-                    }
-                }
-                bitOutput.Flush();
-
-                return allBitsLength;
-            }, tokenSource.Token);
+            return await Task.Run<long>(() => InternalCompress(input, output, codes, null));
         }
 
-        public async Task Decompress(Stream input, Stream output, long bitsLength, HuffmanNode root, CancellationTokenSource tokenSource)
+        public async Task<long> CompressAsync(Stream input, Stream output, IEnumerable<SymbolCode> codes, CancellationTokenSource tokenSource)
+        {
+            if (input == null)
+                throw new ArgumentNullException("input");
+            if (output == null)
+                throw new ArgumentNullException("output");
+            if (!input.CanRead || !input.CanSeek)
+                // todo: exception
+                throw new InvalidOperationException();
+            if (!output.CanWrite)
+                // todo: exception
+                throw new InvalidOperationException();
+
+            return await Task.Run<long>(() => InternalCompress(input, output, codes, tokenSource), tokenSource.Token);
+        }
+
+        public void Decompress(Stream input, Stream output, long bitsLength, HuffmanNode root)
+        {
+            InternalDecompress(input, output, bitsLength, root, null);
+        }
+
+        public async Task DecompressAsync(Stream input, Stream output, long bitsLength, HuffmanNode root)
         {
             if (input == null)
                 throw new ArgumentNullException("input");
@@ -204,52 +283,19 @@ namespace BlackHole.Library
             if (root == null)
                 throw new ArgumentNullException("root");
 
-            await Task.Run(() =>
-            {
-                var token = tokenSource.Token;
-                token.ThrowIfCancellationRequested();
+            await Task.Run(() => InternalDecompress(input, output, bitsLength, root, null));
+        }
 
-                var bitReader = new BitReadStream(input, bitsLength);
+        public async Task DecompressAsync(Stream input, Stream output, long bitsLength, HuffmanNode root, CancellationTokenSource tokenSource)
+        {
+            if (input == null)
+                throw new ArgumentNullException("input");
+            if (output == null)
+                throw new ArgumentNullException("output");
+            if (root == null)
+                throw new ArgumentNullException("root");
 
-                var buf = new byte[BUFFER_SIZE];
-                var index = 0;
-
-                byte? b = null;
-
-                do
-                {
-                    var current = root;
-                    while (!current.IsSymbol)
-                    {
-                        b = bitReader.ReadBit();
-                        if (b == null)
-                            break;
-
-                        if (b == 1)
-                            current = current.Right;
-                        else
-                            current = current.Left;
-                    }
-
-                    if (b != null)
-                    {
-                        buf[index] = (byte)current.Symbol;
-                        index++;
-                    }
-
-                    if (index >= BUFFER_SIZE)
-                    {
-                        token.ThrowIfCancellationRequested();
-
-                        output.Write(buf, 0, buf.Length);
-                        buf = new byte[BUFFER_SIZE];
-                        index = 0;
-                    }
-                } while (b != null);
-
-                if (index != 0)
-                    output.Write(buf, 0, index);
-            }, tokenSource.Token);
+            await Task.Run(() => InternalDecompress(input, output, bitsLength, root, tokenSource), tokenSource.Token);
         }
 
     }

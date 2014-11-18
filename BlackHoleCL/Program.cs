@@ -67,7 +67,7 @@ namespace BlackHoleCL
                     }
                 }
 
-                //archiver.Create(files.ToArray(), outputFile, new CancellationTokenSource());
+                archiver.CreateAsync(files.ToArray(), outputFile, new CancellationTokenSource()).GetAwaiter().GetResult();
             }
             else if ((command == "-d" || command == "/d") && args.Length >= 2)
             {
@@ -89,7 +89,7 @@ namespace BlackHoleCL
                     }
                 }
 
-                //archiver.ExtractAll(inputFile, outputFolder);
+                archiver.ExtractAllAsync(inputFile, outputFolder, new CancellationTokenSource()).GetAwaiter().GetResult();
             }
             else
             {

@@ -6,6 +6,7 @@
         Icon="Images\Icon.ico"
         WindowStartupLocation="CenterScreen">
     <Window.CommandBindings>
+        <CommandBinding Command="local:MainWindow.OpenCommand" Executed="OpenCommand_Execute" />
         <CommandBinding Command="local:MainWindow.ExitCommand" Executed="ExitCommand_Execute" />
         <CommandBinding Command="local:MainWindow.AboutCommand" Executed="AboutCommand_Execute" />
 
@@ -17,6 +18,7 @@
         <CommandBinding Command="local:MainWindow.RemoveCommand" Executed="RemoveCommand_Execute" CanExecute="RemoveCommand_CanExecute" />
     </Window.CommandBindings>
     <Window.InputBindings>
+        <KeyBinding Command="local:MainWindow.OpenCommand" Modifiers="Control" Key="O" />
         <KeyBinding Command="local:MainWindow.ExitCommand" Modifiers="Alt" Key="F4" />
     </Window.InputBindings>
 
@@ -29,7 +31,7 @@
         <Menu>
             <MenuItem Header="Файл">
                 <MenuItem Header="Новий" InputGestureText="Ctrl+N" />
-                <MenuItem Header="Відкрити..." InputGestureText="Ctrl+O" />
+                <MenuItem Header="Відкрити..." InputGestureText="Ctrl+O" Command="local:MainWindow.OpenCommand" />
                 <Separator />
                 <MenuItem Header="Вихід" InputGestureText="Alt+F4" Command="local:MainWindow.ExitCommand" />
             </MenuItem>

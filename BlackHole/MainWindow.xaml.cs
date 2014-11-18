@@ -25,6 +25,8 @@ namespace BlackHole
     public partial class MainWindow : Window
     {
 
+        public static RoutedCommand NewCommand = new RoutedCommand();
+        public static RoutedCommand OpenCommand = new RoutedCommand();
         public static RoutedCommand ExitCommand = new RoutedCommand();
 
         public static RoutedCommand AboutCommand = new RoutedCommand();
@@ -48,6 +50,18 @@ namespace BlackHole
             InitializeComponent();
 
             filesListView.DataContext = files;
+        }
+
+        private void OpenCommand_Execute(object o, ExecutedRoutedEventArgs args)
+        {
+            var ofd = new OpenFileDialog
+            {
+                Filter = "BlackHole Archive (*.bh)|*.bh|All Files (*.*)|*.*"
+            };
+            if (ofd.ShowDialog(this) == true)
+            {
+                fileToArchive = ofd.FileName;
+            }
         }
 
         private void ExitCommand_Execute(object o, ExecutedRoutedEventArgs args)

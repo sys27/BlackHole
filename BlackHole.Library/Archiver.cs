@@ -205,10 +205,9 @@ namespace BlackHole.Library
             {
                 var archive = ReadArchiveInfo(input);
 
-                var file = archive.Where(f => f.Name == fileName).FirstOrDefault();
+                var file = archive.FirstOrDefault(f => f.Name == fileName);
                 if (file == null)
-                    // todo: exception
-                    throw new Exception();
+                    throw new FileNotFoundException();
 
                 await ExtractFileAsync(input, file, folder, tokenSource);
             });

@@ -38,8 +38,7 @@ namespace BlackHole.Library
         public void RemoveLastBit()
         {
             if (lenght <= 0)
-                // todo: exception
-                throw new Exception();
+                throw new IndexOutOfRangeException();
 
             lenght--;
         }

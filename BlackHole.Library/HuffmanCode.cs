@@ -67,7 +67,6 @@ namespace BlackHole.Library
             if (input == null)
                 throw new ArgumentNullException("input");
             if (!input.CanRead || !input.CanSeek)
-                // todo: exception
                 throw new InvalidOperationException();
 
             var weights = new long[256];
@@ -152,9 +151,8 @@ namespace BlackHole.Library
 
         private long CompressInternal(Stream input, Stream output, IEnumerable<SymbolCode> codes, CancellationTokenSource tokenSource)
         {
-            var token = tokenSource.Token;
             if (tokenSource != null)
-                token.ThrowIfCancellationRequested();
+                tokenSource.Token.ThrowIfCancellationRequested();
 
             var buf = new byte[BUFFER_SIZE];
             int count;
@@ -167,7 +165,7 @@ namespace BlackHole.Library
             while ((count = input.Read(buf, 0, buf.Length)) > 0)
             {
                 if (tokenSource != null)
-                    token.ThrowIfCancellationRequested();
+                    tokenSource.Token.ThrowIfCancellationRequested();
 
                 for (int i = 0; i < count; i++)
                 {
@@ -185,9 +183,8 @@ namespace BlackHole.Library
 
         private void DecompressInternal(Stream input, Stream output, long bitsLength, HuffmanNode root, CancellationTokenSource tokenSource)
         {
-            var token = tokenSource.Token;
             if (tokenSource != null)
-                token.ThrowIfCancellationRequested();
+                tokenSource.Token.ThrowIfCancellationRequested();
 
             var bitReader = new BitReadStream(input, bitsLength);
 
@@ -220,7 +217,7 @@ namespace BlackHole.Library
                 if (index >= BUFFER_SIZE)
                 {
                     if (tokenSource != null)
-                        token.ThrowIfCancellationRequested();
+                        tokenSource.Token.ThrowIfCancellationRequested();
 
                     output.Write(buf, 0, buf.Length);
                     buf = new byte[BUFFER_SIZE];
@@ -244,10 +241,8 @@ namespace BlackHole.Library
             if (output == null)
                 throw new ArgumentNullException("output");
             if (!input.CanRead || !input.CanSeek)
-                // todo: exception
                 throw new InvalidOperationException();
             if (!output.CanWrite)
-                // todo: exception
                 throw new InvalidOperationException();
 
             return await Task.Run<long>(() => CompressInternal(input, output, codes, null));
@@ -260,10 +255,8 @@ namespace BlackHole.Library
             if (output == null)
                 throw new ArgumentNullException("output");
             if (!input.CanRead || !input.CanSeek)
-                // todo: exception
                 throw new InvalidOperationException();
             if (!output.CanWrite)
-                // todo: exception
                 throw new InvalidOperationException();
 
             return await Task.Run<long>(() => CompressInternal(input, output, codes, tokenSource), tokenSource.Token);

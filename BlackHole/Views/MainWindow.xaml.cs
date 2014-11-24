@@ -19,7 +19,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace BlackHole
+namespace BlackHole.Views
 {
 
     public partial class MainWindow : Window

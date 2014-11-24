@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace BlackHole
+namespace BlackHole.Views
 {
 
     public partial class AboutWindow : Window

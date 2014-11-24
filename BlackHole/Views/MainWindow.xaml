@@ -1,0 +1,63 @@
+﻿<Window x:Class="BlackHole.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="clr-namespace:BlackHole.Views"
+        Title="BlackHole" Width="640" Height="360"
+        Icon="..\Images\Icon.ico"
+        WindowStartupLocation="CenterScreen">
+    <Window.CommandBindings>
+        <CommandBinding Command="views:MainWindow.OpenCommand" Executed="OpenCommand_Execute" />
+        <CommandBinding Command="views:MainWindow.ExitCommand" Executed="ExitCommand_Execute" />
+        <CommandBinding Command="views:MainWindow.AboutCommand" Executed="AboutCommand_Execute" />
+
+        <CommandBinding Command="views:MainWindow.CompressCommand" Executed="CompressCommand_Execute" CanExecute="CompressCommand_CanExecute" />
+        <CommandBinding Command="views:MainWindow.ExtractAllCommand" Executed="ExtractAllCommand_Execute" CanExecute="ExtractAllCommand_CanExecute" />
+        <CommandBinding Command="views:MainWindow.ExtractCommand" Executed="ExtractCommand_Execute" CanExecute="ExtractCommand_CanExecute" />
+        
+        <CommandBinding Command="views:MainWindow.AddCommand" Executed="AddCommand_Execute" />
+        <CommandBinding Command="views:MainWindow.RemoveCommand" Executed="RemoveCommand_Execute" CanExecute="RemoveCommand_CanExecute" />
+    </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Command="views:MainWindow.OpenCommand" Modifiers="Control" Key="O" />
+        <KeyBinding Command="views:MainWindow.ExitCommand" Modifiers="Alt" Key="F4" />
+    </Window.InputBindings>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Menu>
+            <MenuItem Header="Файл">
+                <MenuItem Header="Новий" InputGestureText="Ctrl+N" />
+                <MenuItem Header="Відкрити..." InputGestureText="Ctrl+O" Command="views:MainWindow.OpenCommand" />
+                <Separator />
+                <MenuItem Header="Вихід" InputGestureText="Alt+F4" Command="views:MainWindow.ExitCommand" />
+            </MenuItem>
+            <MenuItem Header="Допомога">
+                <MenuItem Header="Про програму" Command="views:MainWindow.AboutCommand" />
+            </MenuItem>
+        </Menu>
+        <GroupBox Grid.Row="1" Header="Файли" Margin="2">
+            <Grid>
+                <Button Content="Стиснути" VerticalAlignment="Top" Height="24" HorizontalAlignment="Left" Width="85" Margin="10,0,0,0" Command="views:MainWindow.CompressCommand" />
+                <Button Content="Видобути все" VerticalAlignment="Top" Height="24" HorizontalAlignment="Left" Width="85" Margin="100,0,0,0" Command="views:MainWindow.ExtractAllCommand" />
+                <Button Content="Видобути" VerticalAlignment="Top" Height="24" HorizontalAlignment="Left" Width="85" Margin="190,0,0,0" Command="views:MainWindow.ExtractCommand" />
+                <Label Content="Розмір блоку:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="280,-1,0,0" />
+                <TextBox x:Name="blockSizeTextBox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="48" Margin="370,3,0,0" Text="65536" />
+
+                <Button Content="Додати" Margin="0,0,100,0" VerticalAlignment="Top" Height="24" HorizontalAlignment="Right" Width="85" Command="views:MainWindow.AddCommand" />
+                <Button Content="Видалити" Margin="0,0,10,0" VerticalAlignment="Top" Height="24" HorizontalAlignment="Right" Width="85" Command="views:MainWindow.RemoveCommand" />
+                <ListView x:Name="filesListView" Margin="0,29,0,0" ItemsSource="{Binding}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Назва" Width="400" DisplayMemberBinding="{Binding Name}" />
+                            <GridViewColumn Header="Розмір" Width="150" DisplayMemberBinding="{Binding Size}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Window>

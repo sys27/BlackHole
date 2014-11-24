@@ -20,6 +20,7 @@ namespace BlackHole.Views
     public partial class ProcessingWindow : Window
     {
 
+        public static RoutedCommand StatisticCommand = new RoutedCommand();
         public static RoutedCommand CancelCommand = new RoutedCommand();
 
         private Archiver archiver;
@@ -72,6 +73,12 @@ namespace BlackHole.Views
                 this.DialogResult = true;
                 this.Close();
             }
+        }
+
+        private void StatisticCommand_Executed(object o, ExecutedRoutedEventArgs args)
+        {
+            var statWindow = new SymbolStatisticWindow() { Owner = this };
+            statWindow.Show();
         }
 
         private void CancelCommand_Executed(object o, ExecutedRoutedEventArgs args)

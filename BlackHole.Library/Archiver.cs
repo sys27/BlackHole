@@ -19,6 +19,52 @@ namespace BlackHole.Library
             huffman = new HuffmanCode();
         }
 
+        public IEnumerable<SymbolCode> GetCodes(string file)
+        {
+            if (string.IsNullOrWhiteSpace(file))
+                throw new ArgumentNullException("file");
+
+            using (var input = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
+                return GetCodes(input);
+        }
+
+        public IEnumerable<SymbolCode> GetCodes(Stream input)
+        {
+            return huffman.GetCodes(input);
+        }
+
+        public Archive ReadArchiveInfo(Stream input)
+        {
+            using (var br = new BinaryReader(input, new UTF8Encoding(), true))
+            {
+                int filesCount = br.ReadInt32();
+                var archive = new Archive();
+
+                for (int i = 0; i < filesCount; i++)
+                {
+                    var name = br.ReadString();
+                    var originalSize = br.ReadInt64();
+                    var bitsLength = br.ReadInt64();
+                    var offset = br.ReadInt64();
+
+                    var codesCount = br.ReadInt16();
+                    var codes = new SymbolCode[256];
+                    for (int j = 0; j < codesCount; j++)
+                    {
+                        var symbol = br.ReadByte();
+                        var bits = br.ReadUInt32();
+                        var length = br.ReadByte();
+
+                        codes[symbol] = new SymbolCode { Bits = bits, Length = length };
+                    }
+
+                    archive.Add(new ArchivedFile(name, originalSize, bitsLength, offset, codes));
+                }
+
+                return archive;
+            }
+        }
+
         public async Task CreateAsync(string[] inputFiles, string outputFile, CancellationTokenSource tokenSource)
         {
             if (inputFiles == null)
@@ -120,38 +166,6 @@ namespace BlackHole.Library
                     output.Position = endPosition;
                 }
             }, tokenSource.Token);
-        }
-
-        private Archive ReadArchiveInfo(Stream input)
-        {
-            using (var br = new BinaryReader(input, new UTF8Encoding(), true))
-            {
-                int filesCount = br.ReadInt32();
-                var archive = new Archive();
-
-                for (int i = 0; i < filesCount; i++)
-                {
-                    var name = br.ReadString();
-                    var originalSize = br.ReadInt64();
-                    var bitsLength = br.ReadInt64();
-                    var offset = br.ReadInt64();
-
-                    var codesCount = br.ReadInt16();
-                    var codes = new SymbolCode[256];
-                    for (int j = 0; j < codesCount; j++)
-                    {
-                        var symbol = br.ReadByte();
-                        var bits = br.ReadUInt32();
-                        var length = br.ReadByte();
-
-                        codes[symbol] = new SymbolCode { Bits = bits, Length = length };
-                    }
-
-                    archive.Add(new ArchivedFile(name, originalSize, bitsLength, offset, codes));
-                }
-
-                return archive;
-            }
         }
 
         private async Task ExtractFileAsync(Stream input, ArchivedFile file, string folder, CancellationTokenSource tokenSource)

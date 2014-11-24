@@ -1,4 +1,5 @@
 ﻿using BlackHole.Library;
+using BlackHole.ViewModels;
 using Microsoft.Win32;
 using Ookii.Dialogs.Wpf;
 using System;

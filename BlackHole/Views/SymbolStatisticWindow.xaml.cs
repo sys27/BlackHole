@@ -15,10 +15,10 @@ using System.Windows.Shapes;
 namespace BlackHole.Views
 {
 
-    public partial class SymbolStatistic : Window
+    public partial class SymbolStatisticWindow : Window
     {
 
-        public SymbolStatistic()
+        public SymbolStatisticWindow()
         {
             InitializeComponent();
         }

@@ -5,6 +5,7 @@
         Title="Обробка" Width="480" Height="240" WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize" ShowInTaskbar="False">
     <Window.CommandBindings>
+        <CommandBinding Command="views:ProcessingWindow.StatisticCommand" Executed="StatisticCommand_Executed" />
         <CommandBinding Command="views:ProcessingWindow.CancelCommand" Executed="CancelCommand_Executed" />
     </Window.CommandBindings>
     <Grid>
@@ -21,7 +22,7 @@
         <ProgressBar Margin="10,0,10,35" Height="20" VerticalAlignment="Bottom" />
 
         <CheckBox x:Name="closeAfterCheckBox" Content="Закрити після завершення" HorizontalAlignment="Left" Margin="90,0,0,12" Width="294" Height="15" VerticalAlignment="Bottom" />
-        <Button Content="Статистика" Margin="10,0,0,10" Height="20" VerticalAlignment="Bottom" IsCancel="True" HorizontalAlignment="Left" Width="75" />
+        <Button Content="Статистика" Margin="10,0,0,10" Height="20" VerticalAlignment="Bottom" IsCancel="True" HorizontalAlignment="Left" Width="75" Command="views:ProcessingWindow.StatisticCommand" />
         <Button Content="Відміна" Margin="0,0,10,10" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" IsCancel="True" Command="views:ProcessingWindow.CancelCommand" />
     </Grid>
 </Window>

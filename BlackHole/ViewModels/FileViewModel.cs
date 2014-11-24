@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlackHole
+namespace BlackHole.ViewModels
 {
     
     public class FileViewModel : INotifyPropertyChanged

@@ -29,7 +29,6 @@ namespace BlackHole.Library
 
                 sortedWeights.Add(i, new HuffmanNode(firstMin.Value, secondMin.Value));
                 i++;
-                //sortedWeights.Sort(HuffmanNode.Compare);
             }
 
             return sortedWeights.First().Value;
@@ -83,7 +82,6 @@ namespace BlackHole.Library
             for (int i = 0; i < weights.Length; i++)
                 if (weights[i] > 0)
                     sortedWeights.Add(i, new HuffmanNode((short)i, weights[i]));
-            //sortedWeights.Sort(HuffmanNode.Compare);
             var symbols = sortedWeights.Values.ToArray();
             var root = BuildTree(sortedWeights);
 

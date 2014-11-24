@@ -25,6 +25,9 @@ namespace BlackHole.Views
 
         private Archiver archiver;
 
+        private IEnumerable<string> filesToCompress;
+        private string fileToDecompress;
+
         private CancellationTokenSource compressTokenSource;
         private CancellationTokenSource decompressTokenSource;
 
@@ -38,6 +41,7 @@ namespace BlackHole.Views
         public async void Compress(IEnumerable<string> files, string outputFile, CancellationTokenSource token)
         {
             compressTokenSource = token;
+            filesToCompress = files;
 
             try
             {
@@ -77,7 +81,20 @@ namespace BlackHole.Views
 
         private void StatisticCommand_Executed(object o, ExecutedRoutedEventArgs args)
         {
-            var statWindow = new SymbolStatisticWindow() { Owner = this };
+            var codes = new List<Tuple<string, IEnumerable<SymbolCode>>>();
+            if (compressTokenSource != null)
+            {
+                foreach (var file in filesToCompress)
+                    codes.Add(new Tuple<string, IEnumerable<SymbolCode>>(System.IO.Path.GetFileName(file), archiver.GetCodes(file)));
+            }
+            else if (decompressTokenSource != null)
+            {
+                var info = archiver.ReadArchiveInfo(fileToDecompress);
+                foreach (var file in info)
+                    codes.Add(new Tuple<string, IEnumerable<SymbolCode>>(file.Name, file.Codes));
+            }
+
+            var statWindow = new SymbolStatisticWindow(codes) { Owner = this };
             statWindow.Show();
         }
 

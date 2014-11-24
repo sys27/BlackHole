@@ -60,6 +60,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ViewModels\SymbolViewModel.cs" />
+    <Compile Include="Views\StatisticTab.xaml.cs">
+      <DependentUpon>StatisticTab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SymbolStatisticWindow.xaml.cs">
       <DependentUpon>SymbolStatisticWindow.xaml</DependentUpon>
     </Compile>
@@ -84,6 +87,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\ProcessingWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\StatisticTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

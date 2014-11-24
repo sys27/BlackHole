@@ -13,7 +13,7 @@ namespace BlackHole.ViewModels
 
         public char Symbol { get; set; }
         public byte Code { get; set; }
-        public SymbolCode NewCode { get; set; }
+        public string NewCode { get; set; }
 
     }
 

@@ -1,0 +1,17 @@
+﻿<TabItem x:Class="BlackHole.Views.StatisticTab"
+         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+         mc:Ignorable="d" 
+         d:DesignHeight="300" d:DesignWidth="300">
+    <ListView Margin="10" ItemsSource="{Binding}">
+        <ListView.View>
+            <GridView>
+                <GridViewColumn Header="Символ" Width="120" DisplayMemberBinding="{Binding Path=Symbol}" />
+                <GridViewColumn Header="Код символа" Width="120" DisplayMemberBinding="{Binding Path=Code}" />
+                <GridViewColumn Header="Новий символа" Width="200" DisplayMemberBinding="{Binding Path=NewCode}" />
+            </GridView>
+        </ListView.View>
+    </ListView>
+</TabItem>

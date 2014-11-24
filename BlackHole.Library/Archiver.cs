@@ -33,6 +33,15 @@ namespace BlackHole.Library
             return huffman.GetCodes(input);
         }
 
+        public Archive ReadArchiveInfo(string file)
+        {
+            if (string.IsNullOrWhiteSpace(file))
+                throw new ArgumentNullException("file");
+
+            using (var input = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
+                return ReadArchiveInfo(input);
+        }
+
         public Archive ReadArchiveInfo(Stream input)
         {
             using (var br = new BinaryReader(input, new UTF8Encoding(), true))

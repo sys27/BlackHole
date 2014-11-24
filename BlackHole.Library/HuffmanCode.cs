@@ -16,20 +16,23 @@ namespace BlackHole.Library
 
         public HuffmanCode() { }
 
-        private HuffmanNode BuildTree(List<HuffmanNode> sortedWeights)
+        private HuffmanNode BuildTree(SortedList<int, HuffmanNode> sortedWeights)
         {
+            int i = 256;
+
             while (sortedWeights.Count > 1)
             {
                 var firstMin = sortedWeights.First();
-                sortedWeights.Remove(firstMin);
+                sortedWeights.Remove(firstMin.Key);
                 var secondMin = sortedWeights.First();
-                sortedWeights.Remove(secondMin);
+                sortedWeights.Remove(secondMin.Key);
 
-                sortedWeights.Add(new HuffmanNode(firstMin, secondMin));
-                sortedWeights.Sort(HuffmanNode.Compare);
+                sortedWeights.Add(i, new HuffmanNode(firstMin.Value, secondMin.Value));
+                i++;
+                //sortedWeights.Sort(HuffmanNode.Compare);
             }
 
-            return sortedWeights.First();
+            return sortedWeights.First().Value;
         }
 
         private SymbolCode[] GetCodes(HuffmanNode root, HuffmanNode[] symbols)
@@ -76,12 +79,12 @@ namespace BlackHole.Library
                 for (int i = 0; i < count; i++)
                     weights[buf[i]]++;
 
-            var sortedWeights = new List<HuffmanNode>();
+            var sortedWeights = new SortedList<int, HuffmanNode>();
             for (int i = 0; i < weights.Length; i++)
                 if (weights[i] > 0)
-                    sortedWeights.Add(new HuffmanNode((short)i, weights[i]));
-            sortedWeights.Sort(HuffmanNode.Compare);
-            var symbols = sortedWeights.ToArray();
+                    sortedWeights.Add(i, new HuffmanNode((short)i, weights[i]));
+            //sortedWeights.Sort(HuffmanNode.Compare);
+            var symbols = sortedWeights.Values.ToArray();
             var root = BuildTree(sortedWeights);
 
             return GetCodes(root, symbols);

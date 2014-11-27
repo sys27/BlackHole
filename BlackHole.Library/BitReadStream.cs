@@ -11,7 +11,7 @@ namespace BlackHole.Library
     public class BitReadStream : Stream
     {
 
-        private const int BUFFER_SIZE = 65536;
+        private int BUFFER_SIZE = 65536;
         //private const int MAX_BITS = BUFFER_SIZE * 8;
 
         private Stream stream;
@@ -130,6 +130,18 @@ namespace BlackHole.Library
             set
             {
                 stream.Position = value;
+            }
+        }
+
+        public int BufferSize
+        {
+            get
+            {
+                return BUFFER_SIZE;
+            }
+            set
+            {
+                BUFFER_SIZE = value;
             }
         }
 

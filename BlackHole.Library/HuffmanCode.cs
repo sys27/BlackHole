@@ -166,7 +166,7 @@ namespace BlackHole.Library
             long index = 0;
 
             input.Position = 0;
-            var bitOutput = new BitWriteStream(output);
+            var bitOutput = new BitWriteStream(output) { BufferSize = BUFFER_SIZE };
             long allBitsLength = 0;
             while ((count = input.Read(buf, 0, buf.Length)) > 0)
             {
@@ -192,7 +192,7 @@ namespace BlackHole.Library
             if (tokenSource != null)
                 tokenSource.Token.ThrowIfCancellationRequested();
 
-            var bitReader = new BitReadStream(input, bitsLength);
+            var bitReader = new BitReadStream(input, bitsLength) { BufferSize = BUFFER_SIZE };
 
             var buf = new byte[BUFFER_SIZE];
             var index = 0;

@@ -45,7 +45,7 @@
                 <Button Content="Видобути все" VerticalAlignment="Top" Height="24" HorizontalAlignment="Left" Width="85" Margin="100,0,0,0" Command="views:MainWindow.ExtractAllCommand" />
                 <Button Content="Видобути" VerticalAlignment="Top" Height="24" HorizontalAlignment="Left" Width="85" Margin="190,0,0,0" Command="views:MainWindow.ExtractCommand" />
                 <Label Content="Розмір блоку:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="280,-1,0,0" />
-                <TextBox x:Name="blockSizeTextBox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="48" Margin="370,3,0,0" Text="65536" />
+                <TextBox x:Name="blockSizeTextBox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="48" Margin="370,3,0,0" Text="65536" TextChanged="blockSizeTextBox_TextChanged" />
 
                 <Button Content="Додати" Margin="0,0,100,0" VerticalAlignment="Top" Height="24" HorizontalAlignment="Right" Width="85" Command="views:MainWindow.AddCommand" />
                 <Button Content="Видалити" Margin="0,0,10,0" VerticalAlignment="Top" Height="24" HorizontalAlignment="Right" Width="85" Command="views:MainWindow.RemoveCommand" />

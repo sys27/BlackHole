@@ -53,6 +53,13 @@ namespace BlackHole.Views
             filesListView.DataContext = files;
         }
 
+        private void blockSizeTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            int result;
+            if (int.TryParse(blockSizeTextBox.Text, out result))
+                archiver.HuffmanCode.BufferSize = result;
+        }
+
         private void OpenCommand_Execute(object o, ExecutedRoutedEventArgs args)
         {
             var ofd = new OpenFileDialog
@@ -62,6 +69,10 @@ namespace BlackHole.Views
             if (ofd.ShowDialog(this) == true)
             {
                 fileToArchive = ofd.FileName;
+                var archive = archiver.ReadArchiveInfo(fileToArchive);
+
+                foreach (var file in archive)
+                    files.Add(new FileViewModel(null, file.Name, file.OriginalSize));
             }
         }
 
@@ -99,13 +110,11 @@ namespace BlackHole.Views
 
         private void ExtractAllCommand_Execute(object o, ExecutedRoutedEventArgs args)
         {
-            var fbd = new VistaFolderBrowserDialog
-            {
-            };
+            var fbd = new VistaFolderBrowserDialog();
             if (fbd.ShowDialog(this) == true)
             {
                 var processingWindow = new ProcessingWindow { Owner = this };
-                processingWindow.Decompress(fileToArchive, fbd.SelectedPath, new CancellationTokenSource());
+                processingWindow.DecompressAll(fileToArchive, fbd.SelectedPath, new CancellationTokenSource());
                 processingWindow.ShowDialog();
             }
         }
@@ -117,7 +126,13 @@ namespace BlackHole.Views
 
         private void ExtractCommand_Execute(object o, ExecutedRoutedEventArgs args)
         {
-
+            var fbd = new VistaFolderBrowserDialog();
+            if (fbd.ShowDialog(this) == true)
+            {
+                var processingWindow = new ProcessingWindow { Owner = this };
+                processingWindow.Decompress(fileToArchive, files[filesListView.SelectedIndex].Name, fbd.SelectedPath, new CancellationTokenSource());
+                processingWindow.ShowDialog();
+            }
         }
 
         private void ExtractCommand_CanExecute(object o, CanExecuteRoutedEventArgs args)

@@ -14,9 +14,11 @@ namespace BlackHole.Library
 
         private HuffmanCode huffman;
 
-        public Archiver()
+        public Archiver() : this(65536) { }
+
+        public Archiver(int bufferSize)
         {
-            huffman = new HuffmanCode();
+            huffman = new HuffmanCode(bufferSize);
         }
 
         public IEnumerable<SymbolCode> GetCodes(string file)
@@ -234,6 +236,14 @@ namespace BlackHole.Library
                 foreach (var file in archive)
                     await ExtractFileAsync(input, file, folder, tokenSource);
             }, tokenSource.Token);
+        }
+
+        public HuffmanCode HuffmanCode
+        {
+            get
+            {
+                return huffman;
+            }
         }
 
     }

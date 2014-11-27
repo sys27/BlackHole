@@ -12,9 +12,14 @@ namespace BlackHole.Library
     public class HuffmanCode
     {
 
-        private const int BUFFER_SIZE = 65536;
+        private int BUFFER_SIZE;
 
-        public HuffmanCode() { }
+        public HuffmanCode() : this(65536) { }
+
+        public HuffmanCode(int bufferSize)
+        {
+            BUFFER_SIZE = bufferSize;
+        }
 
         private HuffmanNode BuildTree(SortedList<int, HuffmanNode> sortedWeights)
         {
@@ -290,6 +295,18 @@ namespace BlackHole.Library
                 throw new ArgumentNullException("root");
 
             await Task.Run(() => DecompressInternal(input, output, bitsLength, root, tokenSource), tokenSource.Token);
+        }
+
+        public int BufferSize
+        {
+            get
+            {
+                return BUFFER_SIZE;
+            }
+            set
+            {
+                BUFFER_SIZE = value;
+            }
         }
 
     }

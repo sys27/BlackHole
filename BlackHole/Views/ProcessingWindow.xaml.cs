@@ -59,13 +59,33 @@ namespace BlackHole.Views
             }
         }
 
-        public async Task Decompress(string file, string folder, CancellationTokenSource token)
+        public async Task DecompressAll(string file, string folder, CancellationTokenSource token)
         {
             decompressTokenSource = token;
 
             try
             {
                 await archiver.ExtractAllAsync(file, folder, token);
+            }
+            catch (OperationCanceledException)
+            {
+
+            }
+
+            if (closeAfterCheckBox.IsChecked == true)
+            {
+                this.DialogResult = true;
+                this.Close();
+            }
+        }
+
+        public async Task Decompress(string archive, string file, string folder, CancellationTokenSource token)
+        {
+            decompressTokenSource = token;
+
+            try
+            {
+                await archiver.ExtractAsync(archive, file, folder, token);
             }
             catch (OperationCanceledException)
             {

@@ -11,7 +11,7 @@ namespace BlackHole.Library
     {
 
         private uint bits;
-        private byte lenght;
+        private byte length;
 
         public SymbolCode() { }
 
@@ -21,26 +21,26 @@ namespace BlackHole.Library
             if (s == null)
                 return false;
 
-            return bits == s.bits && lenght == s.lenght;
+            return bits == s.bits && length == s.length;
         }
 
         public override string ToString()
         {
-            return string.Format("Bits: {0}, Length: {1}", Convert.ToString(bits, 2).PadLeft(lenght, '0'), lenght);
+            return string.Format("Bits: {0}, Length: {1}", Convert.ToString(bits, 2).PadLeft(length, '0'), length);
         }
 
         public void SetBit(byte bit)
         {
-            bits |= (uint)(bit << lenght);
-            lenght++;
+            bits |= (uint)(bit << length);
+            length++;
         }
 
         public void RemoveLastBit()
         {
-            if (lenght <= 0)
+            if (length <= 0)
                 throw new IndexOutOfRangeException();
 
-            lenght--;
+            length--;
         }
 
         public uint Bits
@@ -59,11 +59,11 @@ namespace BlackHole.Library
         {
             get
             {
-                return lenght;
+                return length;
             }
             set
             {
-                lenght = value;
+                length = value;
             }
         }
 

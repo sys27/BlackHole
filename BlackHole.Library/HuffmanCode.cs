@@ -155,7 +155,7 @@ namespace BlackHole.Library
             return root;
         }
 
-        private long CompressInternal(Stream input, Stream output, IEnumerable<SymbolCode> codes, CancellationTokenSource tokenSource)
+        private long CompressInternal(Stream input, Stream output, IEnumerable<SymbolCode> codes, CancellationTokenSource tokenSource, IProgress<ProgressArgs> progress, ProgressArgs args)
         {
             if (tokenSource != null)
                 tokenSource.Token.ThrowIfCancellationRequested();
@@ -181,13 +181,52 @@ namespace BlackHole.Library
 
                     index++;
                 }
+
+                if (progress != null)
+                {
+                    args.CurrentSize += count;
+                    progress.Report(args);
+                }
             }
             bitOutput.Flush();
 
             return allBitsLength;
         }
 
-        private void DecompressInternal(Stream input, Stream output, long bitsLength, HuffmanNode root, CancellationTokenSource tokenSource)
+        public long Compress(Stream input, Stream output, IEnumerable<SymbolCode> codes)
+        {
+            return CompressInternal(input, output, codes, null, null, null);
+        }
+
+        public async Task<long> CompressAsync(Stream input, Stream output, IEnumerable<SymbolCode> codes)
+        {
+            if (input == null)
+                throw new ArgumentNullException("input");
+            if (output == null)
+                throw new ArgumentNullException("output");
+            if (!input.CanRead || !input.CanSeek)
+                throw new InvalidOperationException();
+            if (!output.CanWrite)
+                throw new InvalidOperationException();
+
+            return await Task.Run<long>(() => CompressInternal(input, output, codes, null, null, null));
+        }
+
+        public async Task<long> CompressAsync(Stream input, Stream output, IEnumerable<SymbolCode> codes, CancellationTokenSource tokenSource, IProgress<ProgressArgs> progress, ProgressArgs args)
+        {
+            if (input == null)
+                throw new ArgumentNullException("input");
+            if (output == null)
+                throw new ArgumentNullException("output");
+            if (!input.CanRead || !input.CanSeek)
+                throw new InvalidOperationException();
+            if (!output.CanWrite)
+                throw new InvalidOperationException();
+
+            return await Task.Run<long>(() => CompressInternal(input, output, codes, tokenSource, progress, args), tokenSource.Token);
+        }
+
+        private void DecompressInternal(Stream input, Stream output, long bitsLength, HuffmanNode root, CancellationTokenSource tokenSource, IProgress<ProgressArgs> progress, ProgressArgs args)
         {
             if (tokenSource != null)
                 tokenSource.Token.ThrowIfCancellationRequested();
@@ -226,51 +265,33 @@ namespace BlackHole.Library
                         tokenSource.Token.ThrowIfCancellationRequested();
 
                     output.Write(buf, 0, buf.Length);
+                    if (progress != null)
+                    {
+                        args.CurrentSize += index;
+                        progress.Report(args);
+                    }
+
                     buf = new byte[BUFFER_SIZE];
                     index = 0;
                 }
             } while (b != null);
 
             if (index != 0)
+            {
                 output.Write(buf, 0, index);
-        }
 
-        public long Compress(Stream input, Stream output, IEnumerable<SymbolCode> codes)
-        {
-            return CompressInternal(input, output, codes, null);
-        }
+                if (progress != null)
+                {
+                    args.CurrentSize += index;
+                    progress.Report(args);
+                }
+            }
 
-        public async Task<long> CompressAsync(Stream input, Stream output, IEnumerable<SymbolCode> codes)
-        {
-            if (input == null)
-                throw new ArgumentNullException("input");
-            if (output == null)
-                throw new ArgumentNullException("output");
-            if (!input.CanRead || !input.CanSeek)
-                throw new InvalidOperationException();
-            if (!output.CanWrite)
-                throw new InvalidOperationException();
-
-            return await Task.Run<long>(() => CompressInternal(input, output, codes, null));
-        }
-
-        public async Task<long> CompressAsync(Stream input, Stream output, IEnumerable<SymbolCode> codes, CancellationTokenSource tokenSource)
-        {
-            if (input == null)
-                throw new ArgumentNullException("input");
-            if (output == null)
-                throw new ArgumentNullException("output");
-            if (!input.CanRead || !input.CanSeek)
-                throw new InvalidOperationException();
-            if (!output.CanWrite)
-                throw new InvalidOperationException();
-
-            return await Task.Run<long>(() => CompressInternal(input, output, codes, tokenSource), tokenSource.Token);
         }
 
         public void Decompress(Stream input, Stream output, long bitsLength, HuffmanNode root)
         {
-            DecompressInternal(input, output, bitsLength, root, null);
+            DecompressInternal(input, output, bitsLength, root, null, null, null);
         }
 
         public async Task DecompressAsync(Stream input, Stream output, long bitsLength, HuffmanNode root)
@@ -282,10 +303,10 @@ namespace BlackHole.Library
             if (root == null)
                 throw new ArgumentNullException("root");
 
-            await Task.Run(() => DecompressInternal(input, output, bitsLength, root, null));
+            await Task.Run(() => DecompressInternal(input, output, bitsLength, root, null, null, null));
         }
 
-        public async Task DecompressAsync(Stream input, Stream output, long bitsLength, HuffmanNode root, CancellationTokenSource tokenSource)
+        public async Task DecompressAsync(Stream input, Stream output, long bitsLength, HuffmanNode root, CancellationTokenSource tokenSource, IProgress<ProgressArgs> progress, ProgressArgs args)
         {
             if (input == null)
                 throw new ArgumentNullException("input");
@@ -294,7 +315,7 @@ namespace BlackHole.Library
             if (root == null)
                 throw new ArgumentNullException("root");
 
-            await Task.Run(() => DecompressInternal(input, output, bitsLength, root, tokenSource), tokenSource.Token);
+            await Task.Run(() => DecompressInternal(input, output, bitsLength, root, tokenSource, progress, args), tokenSource.Token);
         }
 
         public int BufferSize

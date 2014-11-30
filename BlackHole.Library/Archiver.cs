@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace BlackHole.Library
 {
 
-    public class Archiver
+    public class Archiver : Progress<ProgressArgs>
     {
 
         private HuffmanCode huffman;
@@ -96,6 +96,12 @@ namespace BlackHole.Library
 
             await Task.Run(async () =>
             {
+                var args = new ProgressArgs
+                {
+                    TotalFiles = inputFiles.Length
+                };
+                OnReport(args);
+
                 var token = tokenSource.Token;
                 token.ThrowIfCancellationRequested();
 
@@ -147,9 +153,15 @@ namespace BlackHole.Library
                         }
                     }
 
+                    args.TotalSize = archive.OriginalSize;
+                    OnReport(args);
+
                     for (int i = 0; i < inputFiles.Length; i++)
                     {
                         token.ThrowIfCancellationRequested();
+
+                        args.CurrentFile = i + 1;
+                        OnReport(args);
 
                         var inputFile = inputFiles[i];
                         using (var input = File.OpenRead(inputFile))
@@ -158,7 +170,7 @@ namespace BlackHole.Library
                             var file = archive[i];
 
                             var offset = output.Position;
-                            var bitsLength = await huffman.CompressAsync(input, output, codes, tokenSource);
+                            var bitsLength = await huffman.CompressAsync(input, output, codes, tokenSource, this, args);
                             var compressedPosition = output.Position;
                             var lastArchive = archive.LastOrDefault();
                             file.BitsLength = bitsLength;
@@ -179,13 +191,13 @@ namespace BlackHole.Library
             }, tokenSource.Token);
         }
 
-        private async Task ExtractFileAsync(Stream input, ArchivedFile file, string folder, CancellationTokenSource tokenSource)
+        private async Task ExtractFileAsync(Stream input, ArchivedFile file, string folder, CancellationTokenSource tokenSource, ProgressArgs args)
         {
             var root = huffman.BuildTree(file.Codes);
             using (var output = new FileStream(Path.Combine(folder, file.Name), FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 input.Seek(file.Offset, SeekOrigin.Begin);
-                await huffman.DecompressAsync(input, output, file.BitsLength, root, tokenSource);
+                await huffman.DecompressAsync(input, output, file.BitsLength, root, tokenSource, this, args);
             }
         }
 
@@ -211,7 +223,13 @@ namespace BlackHole.Library
                 if (file == null)
                     throw new FileNotFoundException();
 
-                await ExtractFileAsync(input, file, folder, tokenSource);
+                var args = new ProgressArgs()
+                {
+                    TotalFiles = 1,
+                    TotalSize = file.OriginalSize
+                };
+
+                await ExtractFileAsync(input, file, folder, tokenSource, args);
             });
         }
 
@@ -233,8 +251,17 @@ namespace BlackHole.Library
             {
                 var archive = ReadArchiveInfo(input);
 
-                foreach (var file in archive)
-                    await ExtractFileAsync(input, file, folder, tokenSource);
+                var args = new ProgressArgs()
+                {
+                    TotalFiles = archive.FilesCount,
+                    TotalSize = archive.OriginalSize
+                };
+
+                for (int i = 0; i < archive.FilesCount; i++)
+                {
+                    args.CurrentFile = i + 1;
+                    await ExtractFileAsync(input, archive[i], folder, tokenSource, args);
+                }
             }, tokenSource.Token);
         }
 

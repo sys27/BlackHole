@@ -10,7 +10,7 @@
             <GridView>
                 <GridViewColumn Header="Символ" Width="120" DisplayMemberBinding="{Binding Path=Symbol}" />
                 <GridViewColumn Header="Код символа" Width="120" DisplayMemberBinding="{Binding Path=Code}" />
-                <GridViewColumn Header="Новий символа" Width="200" DisplayMemberBinding="{Binding Path=NewCode}" />
+                <GridViewColumn Header="Новий код символа" Width="200" DisplayMemberBinding="{Binding Path=NewCode}" />
             </GridView>
         </ListView.View>
     </ListView>

@@ -1,6 +1,7 @@
 ﻿using BlackHole.Library;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -31,9 +32,39 @@ namespace BlackHole.Views
         private CancellationTokenSource compressTokenSource;
         private CancellationTokenSource decompressTokenSource;
 
+        private Stopwatch stopwatch;
+        private TimeSpan prevTime;
+        private long prevSize;
+
         public ProcessingWindow()
         {
+            stopwatch = new Stopwatch();
+
             archiver = new Archiver();
+            archiver.ProgressChanged += (obj, args) =>
+            {
+                if (args.TotalSize != 0)
+                {
+                    var percent = args.CurrentSize * 100.0 / args.TotalSize;
+                    percentLabel.Content = percent.ToString("F2") + "%";
+                    progressBar.Value = percent;
+
+                    filesLabel.Content = args.CurrentFile + " / " + args.TotalFiles;
+                    currentSizeLabel.Content = Math.Round(args.CurrentSize / 1048576.0, 2);
+                    totalSizeLabel.Content = Math.Round(args.TotalSize / 1048576.0, 2);
+
+                    var timeRate = 1 / (stopwatch.Elapsed - prevTime).TotalSeconds;
+                    var sizeRate = args.CurrentSize - prevSize;
+                    var sizePerSecond = sizeRate * timeRate;
+
+                    leftTime.Content = new TimeSpan(0, 0, (int)((args.TotalSize - args.CurrentSize) / sizePerSecond)).ToString(@"hh\:mm\:ss");
+
+                    prevTime = stopwatch.Elapsed;
+                    elapsedTimeLabel.Content = prevTime.ToString(@"hh\:mm\:ss");
+
+                    prevSize = args.CurrentSize;
+                }
+            };
 
             InitializeComponent();
         }
@@ -43,6 +74,7 @@ namespace BlackHole.Views
             compressTokenSource = token;
             filesToCompress = files;
 
+            stopwatch.Start();
             try
             {
                 await archiver.CreateAsync(files.ToArray(), outputFile, token);
@@ -51,6 +83,7 @@ namespace BlackHole.Views
             {
 
             }
+            stopwatch.Stop();
 
             if (closeAfterCheckBox.IsChecked == true)
             {
@@ -62,7 +95,9 @@ namespace BlackHole.Views
         public async Task DecompressAll(string file, string folder, CancellationTokenSource token)
         {
             decompressTokenSource = token;
+            fileToDecompress = file;
 
+            stopwatch.Start();
             try
             {
                 await archiver.ExtractAllAsync(file, folder, token);
@@ -71,6 +106,7 @@ namespace BlackHole.Views
             {
 
             }
+            stopwatch.Stop();
 
             if (closeAfterCheckBox.IsChecked == true)
             {
@@ -82,7 +118,9 @@ namespace BlackHole.Views
         public async Task Decompress(string archive, string file, string folder, CancellationTokenSource token)
         {
             decompressTokenSource = token;
+            fileToDecompress = archive;
 
+            stopwatch.Start();
             try
             {
                 await archiver.ExtractAsync(archive, file, folder, token);
@@ -91,6 +129,7 @@ namespace BlackHole.Views
             {
 
             }
+            stopwatch.Stop();
 
             if (closeAfterCheckBox.IsChecked == true)
             {

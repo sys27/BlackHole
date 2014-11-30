@@ -10,16 +10,20 @@
     </Window.CommandBindings>
     <Grid>
         <Label Content="Минуло часу:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
+		<Label x:Name="elapsedTimeLabel" Content="0" HorizontalAlignment="Left" Margin="98.96,10,0,0" VerticalAlignment="Top" />
         <Label Content="Залишилось часу:" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" />
+		<Label x:Name="leftTime" Content="0" HorizontalAlignment="Left" Margin="122.52,41,0,0" VerticalAlignment="Top" />
         <Label Content="Файлів:" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" />
+		<Label x:Name="filesLabel" Content="0" HorizontalAlignment="Left" Margin="65,72,0,0" VerticalAlignment="Top" />
 
-        <Label Content="Загалом:" HorizontalAlignment="Left" Margin="241,10,0,0" VerticalAlignment="Top" />
-        <Label Content="Оброблено:" HorizontalAlignment="Left" Margin="241,41,0,0" VerticalAlignment="Top" />
-        <Label Content="Розмір в архіві:" HorizontalAlignment="Left" Margin="241,72,0,0" VerticalAlignment="Top" />
+        <Label Content="Загалом (МБ):" HorizontalAlignment="Left" Margin="244,41,0,0" VerticalAlignment="Top" />
+		<Label x:Name="totalSizeLabel" Content="0" HorizontalAlignment="Left" Margin="334.83,41,0,0" VerticalAlignment="Top" />
+        <Label Content="Оброблено (МБ):" HorizontalAlignment="Left" Margin="244,10,0,0" VerticalAlignment="Top" />
+		<Label x:Name="currentSizeLabel" Content="0" HorizontalAlignment="Left" Margin="353.35,10,0,0" VerticalAlignment="Top" />
 
         <Label Content="Оброблено:" Margin="10,0,0,55" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="94" />
-        <Label Content="100%" Margin="0,0,10,55" VerticalAlignment="Bottom" HorizontalAlignment="Right" TextBlock.TextAlignment="Right" />
-        <ProgressBar Margin="10,0,10,35" Height="20" VerticalAlignment="Bottom" />
+        <Label x:Name="percentLabel" Content="0%" Margin="0,0,10,55" VerticalAlignment="Bottom" HorizontalAlignment="Right" TextBlock.TextAlignment="Right" />
+        <ProgressBar x:Name="progressBar" Margin="10,0,10,35" Height="20" VerticalAlignment="Bottom" />
 
         <CheckBox x:Name="closeAfterCheckBox" Content="Закрити після завершення" HorizontalAlignment="Left" Margin="90,0,0,12" Width="294" Height="15" VerticalAlignment="Bottom" />
         <Button Content="Статистика" Margin="10,0,0,10" Height="20" VerticalAlignment="Bottom" IsCancel="True" HorizontalAlignment="Left" Width="75" Command="views:ProcessingWindow.StatisticCommand" />

@@ -45,6 +45,7 @@
     <Compile Include="BitReadStream.cs" />
     <Compile Include="BitWriteStream.cs" />
     <Compile Include="HuffmanCode.cs" />
+    <Compile Include="ProgressArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HuffmanNode.cs" />
     <Compile Include="SymbolCode.cs" />

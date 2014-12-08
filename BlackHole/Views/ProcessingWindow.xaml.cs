@@ -77,7 +77,11 @@ namespace BlackHole.Views
             stopwatch.Start();
             try
             {
+                App.WriteToReport(string.Format("Почато стискання файлів в архів \"{0}\".", outputFile));
+
                 await archiver.CreateAsync(files.ToArray(), outputFile, token);
+
+                App.WriteToReport(string.Format("Завершено стискання файлів в архів \"{0}\".", outputFile));
             }
             catch (OperationCanceledException)
             {
@@ -100,7 +104,11 @@ namespace BlackHole.Views
             stopwatch.Start();
             try
             {
+                App.WriteToReport(string.Format("Почато розпаковування всіх файлів з архіву \"{0}\" до папки \"{1}\".", file, folder));
+
                 await archiver.ExtractAllAsync(file, folder, token);
+
+                App.WriteToReport(string.Format("Завершено розпаковування всіх файлів з архіву \"{0}\" до папки \"{1}\".", file, folder));
             }
             catch (OperationCanceledException)
             {
@@ -123,7 +131,11 @@ namespace BlackHole.Views
             stopwatch.Start();
             try
             {
+                App.WriteToReport(string.Format("Почато розпаковування файлу \"{1}\" з архіву \"{0}\" до папки \"{2}\".", archive, file, folder));
+
                 await archiver.ExtractAsync(archive, file, folder, token);
+
+                App.WriteToReport(string.Format("Завершено розпаковування всіх файлів \"{1}\" з архіву \"{0}\" до папки \"{2}\".", archive, file, folder));
             }
             catch (OperationCanceledException)
             {
@@ -160,9 +172,17 @@ namespace BlackHole.Views
         private void CancelCommand_Executed(object o, ExecutedRoutedEventArgs args)
         {
             if (compressTokenSource != null)
+            {
                 compressTokenSource.Cancel();
+
+                App.WriteToReport("Стискання перервано користувачем.");
+            }
             if (decompressTokenSource != null)
+            {
                 decompressTokenSource.Cancel();
+
+                App.WriteToReport("Розпакування перервано користувачем.");
+            }
 
             this.DialogResult = false;
             this.Close();

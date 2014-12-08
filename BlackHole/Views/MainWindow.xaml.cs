@@ -30,6 +30,7 @@ namespace BlackHole.Views
         public static RoutedCommand OpenCommand = new RoutedCommand();
         public static RoutedCommand ExitCommand = new RoutedCommand();
 
+        public static RoutedCommand ShowHelpCommand = new RoutedCommand();
         public static RoutedCommand AboutCommand = new RoutedCommand();
 
         public static RoutedCommand CompressCommand = new RoutedCommand();
@@ -57,7 +58,11 @@ namespace BlackHole.Views
         {
             int result;
             if (int.TryParse(blockSizeTextBox.Text, out result))
+            {
                 archiver.HuffmanCode.BufferSize = result;
+
+                App.WriteToReport(string.Format("Змінено розмір блоку на {0}.", result));
+            }
         }
 
         private void OpenCommand_Execute(object o, ExecutedRoutedEventArgs args)
@@ -73,12 +78,19 @@ namespace BlackHole.Views
 
                 foreach (var file in archive)
                     files.Add(new FileViewModel(null, file.Name, file.OriginalSize));
+
+                App.WriteToReport(string.Format("Відкрито файл \"{0}\".", fileToArchive));
             }
         }
 
         private void ExitCommand_Execute(object o, ExecutedRoutedEventArgs args)
         {
             Application.Current.Shutdown();
+        }
+
+        private void ShowHelpCommand_Execute(object o, ExecutedRoutedEventArgs args)
+        {
+
         }
 
         private void AboutCommand_Execute(object o, ExecutedRoutedEventArgs args)
@@ -98,6 +110,7 @@ namespace BlackHole.Views
             {
                 var processingWindow = new ProcessingWindow { Owner = this };
                 fileToArchive = sfd.FileName;
+
                 processingWindow.Compress(files.Select(file => file.FullName), sfd.FileName, new CancellationTokenSource());
                 processingWindow.ShowDialog();
             }

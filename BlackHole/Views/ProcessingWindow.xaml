@@ -17,7 +17,7 @@
 		<Label x:Name="filesLabel" Content="0" HorizontalAlignment="Left" Margin="65,72,0,0" VerticalAlignment="Top" />
 
         <Label Content="Загалом (МБ):" HorizontalAlignment="Left" Margin="244,41,0,0" VerticalAlignment="Top" />
-		<Label x:Name="totalSizeLabel" Content="0" HorizontalAlignment="Left" Margin="334.83,41,0,0" VerticalAlignment="Top" />
+		<Label x:Name="totalSizeLabel" Content="0" HorizontalAlignment="Left" Margin="3383,41,0,0" VerticalAlignment="Top" />
         <Label Content="Оброблено (МБ):" HorizontalAlignment="Left" Margin="244,10,0,0" VerticalAlignment="Top" />
 		<Label x:Name="currentSizeLabel" Content="0" HorizontalAlignment="Left" Margin="353.35,10,0,0" VerticalAlignment="Top" />
 

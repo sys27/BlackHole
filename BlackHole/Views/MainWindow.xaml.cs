@@ -5,6 +5,7 @@ using Ookii.Dialogs.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -90,7 +91,7 @@ namespace BlackHole.Views
 
         private void ShowHelpCommand_Execute(object o, ExecutedRoutedEventArgs args)
         {
-
+            Process.Start(@"Help\help.html");
         }
 
         private void AboutCommand_Execute(object o, ExecutedRoutedEventArgs args)

@@ -35,6 +35,30 @@ namespace BlackHole.Library
             return huffman.GetCodes(input);
         }
 
+        public long[] GetWeights(string file)
+        {
+            if (string.IsNullOrWhiteSpace(file))
+                throw new ArgumentNullException("file");
+
+            using (var input = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
+                return GetWeights(input);
+        }
+
+        public long[] GetWeights(Stream input)
+        {
+            if (input == null)
+                throw new ArgumentNullException("inout");
+
+            var weights = new long[256];
+            var buf = new byte[65536];
+            int count;
+            while ((count = input.Read(buf, 0, buf.Length)) > 0)
+                for (int i = 0; i < count; i++)
+                    weights[buf[i]]++;
+
+            return weights;
+        }
+
         public Archive ReadArchiveInfo(string file)
         {
             if (string.IsNullOrWhiteSpace(file))

@@ -152,17 +152,17 @@ namespace BlackHole.Views
 
         private void StatisticCommand_Executed(object o, ExecutedRoutedEventArgs args)
         {
-            var codes = new List<Tuple<string, IEnumerable<SymbolCode>>>();
+            var codes = new List<Tuple<string, IEnumerable<long>, IEnumerable<SymbolCode>>>();
             if (compressTokenSource != null)
             {
                 foreach (var file in filesToCompress)
-                    codes.Add(new Tuple<string, IEnumerable<SymbolCode>>(System.IO.Path.GetFileName(file), archiver.GetCodes(file)));
+                    codes.Add(new Tuple<string, IEnumerable<long>, IEnumerable<SymbolCode>>(System.IO.Path.GetFileName(file), archiver.GetWeights(file), archiver.GetCodes(file)));
             }
             else if (decompressTokenSource != null)
             {
                 var info = archiver.ReadArchiveInfo(fileToDecompress);
                 foreach (var file in info)
-                    codes.Add(new Tuple<string, IEnumerable<SymbolCode>>(file.Name, file.Codes));
+                    codes.Add(new Tuple<string, IEnumerable<long>, IEnumerable<SymbolCode>>(file.Name, null, file.Codes));
             }
 
             var statWindow = new SymbolStatisticWindow(codes) { Owner = this };

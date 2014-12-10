@@ -31,16 +31,16 @@
         </Grid.RowDefinitions>
 
         <Menu>
-            <MenuItem Header="Файл">
-                <MenuItem Header="Новий" InputGestureText="Ctrl+N" />
-                <MenuItem Header="Відкрити..." InputGestureText="Ctrl+O" Command="views:MainWindow.OpenCommand" />
+            <MenuItem Header="_Файл">
+                <MenuItem Header="_Новий" InputGestureText="Ctrl+N" />
+                <MenuItem Header="_Відкрити..." InputGestureText="Ctrl+O" Command="views:MainWindow.OpenCommand" />
                 <Separator />
-                <MenuItem Header="Вихід" InputGestureText="Alt+F4" Command="views:MainWindow.ExitCommand" />
+                <MenuItem Header="Ви_хід" InputGestureText="Alt+F4" Command="views:MainWindow.ExitCommand" />
             </MenuItem>
-            <MenuItem Header="Допомога">
+            <MenuItem Header="_Допомога">
                 <MenuItem Header="Відобразити допомогу" InputGestureText="F1" Command="views:MainWindow.ShowHelpCommand" />
                 <Separator />
-                <MenuItem Header="Про програму" Command="views:MainWindow.AboutCommand" />
+                <MenuItem Header="_Про програму" Command="views:MainWindow.AboutCommand" />
             </MenuItem>
         </Menu>
         <GroupBox Grid.Row="1" Header="Файли" Margin="2">

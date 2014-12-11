@@ -66,6 +66,12 @@ namespace BlackHole.Views
             }
         }
 
+        private void NewCommand_Execute(object o, ExecutedRoutedEventArgs args)
+        {
+            files.Clear();
+            fileToArchive = string.Empty;
+        }
+
         private void OpenCommand_Execute(object o, ExecutedRoutedEventArgs args)
         {
             var ofd = new OpenFileDialog
@@ -74,6 +80,7 @@ namespace BlackHole.Views
             };
             if (ofd.ShowDialog(this) == true)
             {
+                files.Clear();
                 fileToArchive = ofd.FileName;
                 var archive = archiver.ReadArchiveInfo(fileToArchive);
 

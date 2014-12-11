@@ -6,6 +6,7 @@
         Icon="..\Images\Icon.ico"
         WindowStartupLocation="CenterScreen">
     <Window.CommandBindings>
+        <CommandBinding Command="views:MainWindow.NewCommand" Executed="NewCommand_Execute" />
         <CommandBinding Command="views:MainWindow.OpenCommand" Executed="OpenCommand_Execute" />
         <CommandBinding Command="views:MainWindow.ExitCommand" Executed="ExitCommand_Execute" />
         <CommandBinding Command="views:MainWindow.ShowHelpCommand" Executed="ShowHelpCommand_Execute" />
@@ -19,6 +20,7 @@
         <CommandBinding Command="views:MainWindow.RemoveCommand" Executed="RemoveCommand_Execute" CanExecute="RemoveCommand_CanExecute" />
     </Window.CommandBindings>
     <Window.InputBindings>
+        <KeyBinding Command="views:MainWindow.NewCommand" Modifiers="Control" Key="N" />
         <KeyBinding Command="views:MainWindow.OpenCommand" Modifiers="Control" Key="O" />
         <KeyBinding Command="views:MainWindow.ExitCommand" Modifiers="Alt" Key="F4" />
         <KeyBinding Command="views:MainWindow.ShowHelpCommand" Key="F1" />
@@ -32,7 +34,7 @@
 
         <Menu>
             <MenuItem Header="_Файл">
-                <MenuItem Header="_Новий" InputGestureText="Ctrl+N" />
+                <MenuItem Header="_Новий" InputGestureText="Ctrl+N" Command="views:MainWindow.NewCommand" />
                 <MenuItem Header="_Відкрити..." InputGestureText="Ctrl+O" Command="views:MainWindow.OpenCommand" />
                 <Separator />
                 <MenuItem Header="Ви_хід" InputGestureText="Alt+F4" Command="views:MainWindow.ExitCommand" />

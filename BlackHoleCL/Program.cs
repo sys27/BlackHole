@@ -41,6 +41,10 @@ namespace BlackHoleCL
             else if ((command == "-c" || command == "/c") && args.Length >= 2)
             {
                 var archiver = new Archiver();
+                archiver.ProgressChanged += (o, a) =>
+                {
+                    Console.Write("\r{0}%", (a.CurrentSize * 100.0 / a.TotalSize).ToString("F2"));
+                };
 
                 var outputFile = "output.bh";
                 var files = new List<string>();
@@ -67,11 +71,17 @@ namespace BlackHoleCL
                     }
                 }
 
+                Console.WriteLine("Почато стиснення файлів до архіву \"{0}\".", outputFile);
                 archiver.CreateAsync(files.ToArray(), outputFile, new CancellationTokenSource()).GetAwaiter().GetResult();
+                Console.WriteLine("\nЗакінчено стиснення файлів до архіву \"{0}\".", outputFile);
             }
             else if ((command == "-d" || command == "/d") && args.Length >= 2)
             {
                 var archiver = new Archiver();
+                archiver.ProgressChanged += (o, a) =>
+                {
+                    Console.Write("\r{0}%", (a.CurrentSize * 100.0 / a.TotalSize).ToString("F2"));
+                };
 
                 var inputFile = args[1];
                 var outputFolder = string.Empty;
@@ -89,7 +99,9 @@ namespace BlackHoleCL
                     }
                 }
 
+                Console.WriteLine("Почато розпакування файлів з архіву \"{0}\".", inputFile);
                 archiver.ExtractAllAsync(inputFile, outputFolder, new CancellationTokenSource()).GetAwaiter().GetResult();
+                Console.WriteLine("\nЗакінчено розпакування файлів з архіву \"{0}\".", inputFile);
             }
             else
             {
